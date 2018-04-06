@@ -15,7 +15,7 @@ import org.apache.commons.lang.IncompleteArgumentException;
 
 import com.microsoft.sqlserver.jdbc.SQLServerConnectionPoolDataSource;
 
-public final class JarvisSqlServerPoolDataSource implements IPool {
+public final class JarvisSqlServerPoolDataSource {
 
 	private final int initialPoolsize;
 	private final int maxPoolSize;
