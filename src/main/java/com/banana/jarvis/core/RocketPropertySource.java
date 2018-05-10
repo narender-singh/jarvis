@@ -25,4 +25,7 @@ public class RocketPropertySource extends PropertySource<String>
 		return properties.getProperty(key);
 	}
 
+	public Properties getProperties() {
+		return properties;
+	}
 }

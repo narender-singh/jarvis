@@ -1,4 +1,4 @@
-package com.banana.jarvis.core;
+package com.banana.jarvis.core.annotation;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

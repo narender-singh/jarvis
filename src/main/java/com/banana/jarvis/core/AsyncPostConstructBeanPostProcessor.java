@@ -12,6 +12,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
+import com.banana.jarvis.core.annotation.AsyncPostConstruct;
+
 public class AsyncPostConstructBeanPostProcessor implements BeanPostProcessor {
 
 	Map<Object, Future<Object>> asyncInitializations;
@@ -46,6 +48,11 @@ public class AsyncPostConstructBeanPostProcessor implements BeanPostProcessor {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
 	}
 
 }

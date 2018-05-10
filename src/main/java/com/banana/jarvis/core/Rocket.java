@@ -8,6 +8,8 @@ import java.util.concurrent.CountDownLatch;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.banana.jarvis.core.configuration.CoreSpringConfiguration;
+
 public class Rocket implements AutoCloseable {
 
 	private Properties properties;
