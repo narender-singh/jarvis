@@ -13,8 +13,10 @@ public class GenericInterceptor extends AbstractPhaseInterceptor<Message> {
 
 	@Override
 	public void handleMessage(Message message) throws Fault {
-		System.out.println(Message.CONTENT_TYPE);
-		System.out.println(Message.REQUEST_URL);
-		System.out.println(message.getContent(String.class));
+		
+		for(String key : message.keySet())
+		{
+			System.out.println("key : " + key + "value : " + message.get(key));
+		}
 	}
 }

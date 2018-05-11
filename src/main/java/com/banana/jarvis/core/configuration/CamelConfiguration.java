@@ -3,6 +3,7 @@ package com.banana.jarvis.core.configuration;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.springframework.beans.BeansException;
@@ -26,11 +27,18 @@ public class CamelConfiguration implements ApplicationContextAware {
 
 	// currently not in use, need to check more on this.
 	@Bean
-	@InstantiateFirst
-	public SpringBus springBus() {
+	@InstantiateFirst(priority = 1)
+	public SpringBus cxf() {
 		return RocketSpringCxfBusFactory.create(springContext);
 	}
 
+	@Bean
+	@InstantiateFirst
+	public BusFactory cxfbusFactory()
+	{
+		return new RocketSpringCxfBusFactory(springContext);
+	}
+	
 	@Bean
 	public JacksonJsonProvider jsonProvider() {
 		return new JsonProvider();
