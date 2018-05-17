@@ -8,9 +8,9 @@ script: mvn install
 addons:
   coverity_scan:
     project:
-      name: "zolyfarkas/spf4j"
+      name: "narender-singh/rocket"
       description: "Build submitted via Travis CI"
-    notification_email: zolyfarkas@yahoo.com
+    notification_email: na.singh@aol.com
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile"
     branch_pattern: master
