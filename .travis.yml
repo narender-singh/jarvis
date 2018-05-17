@@ -3,10 +3,9 @@ language: java
 jdk:
   - oraclejdk9
 
-mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-#script: mvn -B DskipTests=true -Dgpg.skip=true install
+script: mvn -B -Dgpg.skip=true install
 
-#install: mvn install -B -DskipTests=true -Dgpg.skip=true
+install: mvn -B -DskipTests=true -Dgpg.skip=true clean install
 
 #addons:
 #  coverity_scan:
