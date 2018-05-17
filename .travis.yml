@@ -3,9 +3,9 @@ language: java
 jdk:
   - oraclejdk9
 
-script: mvn -B -Dgpg.skip=true install
+#script: mvn -B -Dgpg.skip=true install
 
-install: mvn -B -DskipTests=true -Dgpg.skip=true install
+install: mvn install -B -DskipTests=true -Dgpg.skip=true
 
 #addons:
 #  coverity_scan:
