@@ -5,7 +5,7 @@ jdk:
 
 script: mvn -B -Dgpg.skip=true install
 
-install: mvn -B -DskipTests=true -Dgpg.skip=true
+install: mvn -B -DskipTests=true -Dgpg.skip=true clean install
 
 #addons:
 #  coverity_scan:
