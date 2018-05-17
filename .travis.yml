@@ -3,7 +3,8 @@ language: java
 jdk:
   - oraclejdk9
 
-script: mvn -B DskipTests=true -Dgpg.skip=true install
+mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+#script: mvn -B DskipTests=true -Dgpg.skip=true install
 
 #install: mvn install -B -DskipTests=true -Dgpg.skip=true
 
