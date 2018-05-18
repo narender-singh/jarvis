@@ -1,8 +1,6 @@
 # rocket
 Java web service framework
 
-?style={style}
-
 Available on [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.narender-singh/rocket/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.narender-singh/rocket/)
 
 Codacy: [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d49abf1b558437b98751dc9fab801e1)](https://www.codacy.com/app/na.singh/rocket?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=narender-singh/rocket&amp;utm_campaign=Badge_Grade)
