@@ -7,7 +7,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.SmartLifecycle;
 
-import com.rocket.JarvisRoutes;
 import com.rocket.core.annotation.AsyncPostConstruct;
 
 public class RocketCamelSpringContextWrapper implements SmartLifecycle, DisposableBean {
@@ -40,14 +39,9 @@ public class RocketCamelSpringContextWrapper implements SmartLifecycle, Disposab
 
 	@Override
 	public void start() {
-		try {
-			if (camelContext.isStarted())
-				System.out.print("Context already running");			
-			appContext.getBean(JarvisRoutes.class).addRoutesToCamelContext(camelContext);			
+		try {						
 			SpringCamelContext.setNoStart(false);
-			camelContext.start();
-			if (camelContext.isStarting())
-				System.out.print("Context started running");
+			camelContext.start();			
 			System.out.println("Routes : " + camelContext.getRoutes());
 			isRunning = true;
 		} catch (Exception e) {

@@ -1,20 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2018, Narender Singh All Rights Reserved. This library 
+	is free software; you can redistribute it and/or modify it under the terms 
+	of the GNU Lesser General Public License as published by the Free Software 
+	Foundation; either version 2.1 of the License, or (at your option) any later 
+	version. This library is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+	more details. You should have received a copy of the GNU Lesser General Public 
+	License along with this program; if not, write to the Free Software Foundation, 
+	Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.banana</groupId>
-	<artifactId>jarvis</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>com.github.narender-singh</groupId>
+	<artifactId>rocket</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
+	<description>Java web service framework</description>
 
 	<name>${project.artifactId}</name>
 	<url>http://maven.apache.org</url>
+
+	<scm>
+		<connection>scm:git:https://github.com/narender-singh/rocket.git</connection>
+		<developerConnection>scm:git:https://github.com/narender-singh/rocket.git</developerConnection>
+		<url>https://github.com/narender-singh/rocket/</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/narender-singh/rocket/issues</url>
+	</issueManagement>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>OSSRH</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>OSSRH</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+	<ciManagement>
+		<system>travis-ci</system>
+		<url>https://travis-ci.org/narender-singh/rocket</url>
+	</ciManagement>
+
 
 	<dependencies>
 		<dependency>

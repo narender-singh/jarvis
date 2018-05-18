@@ -15,7 +15,7 @@ import org.apache.commons.lang.IncompleteArgumentException;
 
 import com.microsoft.sqlserver.jdbc.SQLServerConnectionPoolDataSource;
 
-public final class JarvisSqlServerPoolDataSource {
+public final class RocketSqlServerPoolDataSource {
 
 	private final int initialPoolsize;
 	private final int maxPoolSize;
@@ -36,12 +36,12 @@ public final class JarvisSqlServerPoolDataSource {
 
 	private static final DBSourceBuilder BUILDER_INSTANCE = new DBSourceBuilder();
 
-	private JarvisSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
+	private RocketSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
 			String db) {
 		this(poolName, serverName, portNo, user, passwd, db, 1, 5, 600000, 600000);
 	}
 
-	private JarvisSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
+	private RocketSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
 			String db, int initialPoolsiz, int maxPoolsize, int inactiveTimeout, int checkTimeout) {
 		this.poolName = poolName;
 		this.serverName = serverName;
@@ -200,12 +200,12 @@ public final class JarvisSqlServerPoolDataSource {
 			return this;
 		}
 
-		public JarvisSqlServerPoolDataSource build() throws IncompleteArgumentException {
+		public RocketSqlServerPoolDataSource build() throws IncompleteArgumentException {
 			if (null == serverName)
 				throw new IncompleteArgumentException("userName is must for the connection");
 			if (null == password)
 				throw new IncompleteArgumentException("userName is must for the connection");
-			return new JarvisSqlServerPoolDataSource(poolName, serverName, portNo, userName, password, dbName,
+			return new RocketSqlServerPoolDataSource(poolName, serverName, portNo, userName, password, dbName,
 					initialPoolsize, maxPoolSize, inactiveConnectionTimeout, timeoutCheckInterval);
 		}
 	}
