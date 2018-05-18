@@ -262,12 +262,58 @@
 				<version>0.8.0</version>
 				<executions>
 					<execution>
-						<phase>verify</phase>
+						<id>prepare-agent</id>
 						<goals>
-							<goal>report-aggregate</goal>
+							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>report</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule implementation="org.jacoco.maven.RuleConfiguration">
+									<element>BUNDLE</element>
+									<excludes>
+										<exclude>*Test</exclude>
+									</excludes>
+									<limits>
+										<limit implementation="org.jacoco.report.check.Limit">
+											<counter>INSTRUCTION</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.4</minimum>
+										</limit>
+										<limit implementation="org.jacoco.report.check.Limit">
+											<counter>CLASS</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.5</minimum>
+										</limit>
+										<limit implementation="org.jacoco.report.check.Limit">
+											<counter>METHOD</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.4</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
 				</executions>
+				<configuration>
+					<inclNoLocationClasses>true</inclNoLocationClasses>
+					<includes>
+						<include>com/rocket/**/*</include>
+					</includes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<!-- Build an executable JAR -->
