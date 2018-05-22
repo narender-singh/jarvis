@@ -17,6 +17,7 @@ import com.rocket.core.configuration.CoreSpringConfiguration;
 public class Rocket implements AutoCloseable {
 
 	private Properties properties;
+	private static boolean isinitialized = false;
 	private final Set<Class<?>> MAIN_CLASSES = new HashSet<>(2);
 	private final Set<String> MAIN_PACKAGES = new HashSet<>(2);
 	private CountDownLatch exitSignal = new CountDownLatch(1);
@@ -43,11 +44,10 @@ public class Rocket implements AutoCloseable {
 	public AnnotationConfigApplicationContext getContext() {
 		return this.context;
 	}
-	
-	public static Rocket configure(){
+
+	public static Rocket configure() {
 		return Builder.getRocket();
 	}
-	
 
 	public static Rocket build() {
 		return Builder.getRocket();
@@ -72,12 +72,12 @@ public class Rocket implements AutoCloseable {
 	}
 
 	private static class Builder {
-		
-		public static Logger LAZY  = LoggerFactory.getLogger(Rocket.Builder.class);
-		
+
+		public static Logger LAZY = LoggerFactory.getLogger(Rocket.Builder.class);
+
 		private static final Rocket rocket = new Rocket();
 
-		static{
+		static {
 			rocket.properties = new Properties();
 			try {
 				rocket.properties.load(new FileInputStream("default.properties"));
@@ -85,7 +85,7 @@ public class Rocket implements AutoCloseable {
 				LAZY.warn("default.properties file not found");
 			}
 		}
-		
+
 		private static Rocket getRocket() {
 			return rocket;
 		}
@@ -116,33 +116,49 @@ public class Rocket implements AutoCloseable {
 	}
 
 	public Rocket initialize() {
-		initializeInternal();
+		if (!isinitialized) {
+			initializeInternal();
+			Rocket.isinitialized = !isinitialized;
+		} else {
+			Builder.LAZY.warn("Rocket Already Initialized, Ignoring this request !!");
+		}
 		return this;
 	}
 
 	public void launchAndWait() {
+		Builder.LAZY.info("Rocket context starting...");
 		context.start();
 		System.exit(waitForExistSingal());
 	}
 
 	private void initializeInternal() {
-		RocketPropertySource propSource = new RocketPropertySource(properties);
-		this.propSource = propSource;
-		originalSystemProperties = updateAndMergeSystemProperties(properties);
-		AsyncPostConstructBeanPostProcessor post = new AsyncPostConstructBeanPostProcessor();
-		RocketSpringContext context = new RocketSpringContext(propSource, post);
-		this.context = context;
-		this.context.register(CoreSpringConfiguration.class);
-		if (MAIN_CLASSES.size() > 0)
-			MAIN_CLASSES.forEach((cls) -> {
-				context.register(cls);
-			});
-		if (MAIN_PACKAGES.size() > 0)
-			MAIN_PACKAGES.forEach((p) -> {
-				context.scan(p);
-			});
-		context.refresh();
-		context.waitForInitializationToComplete();
+
+		try {
+			RocketPropertySource propSource = new RocketPropertySource(properties);
+			this.propSource = propSource;
+			originalSystemProperties = updateAndMergeSystemProperties(properties);
+			Builder.LAZY.info("Orignal system properties are : " + originalSystemProperties);
+			Builder.LAZY.info("rocket properties are : " + properties);
+			AsyncPostConstructBeanPostProcessor post = new AsyncPostConstructBeanPostProcessor();
+			RocketSpringContext context = new RocketSpringContext(propSource, post);
+			this.context = context;
+			this.context.register(CoreSpringConfiguration.class);
+			Builder.LAZY.info("Registered Classes with rocket are : " + MAIN_CLASSES);
+			if (MAIN_CLASSES.size() > 0)
+				MAIN_CLASSES.forEach((cls) -> {
+					context.register(cls);
+				});
+			Builder.LAZY.info("Registered Packages with rocket are : " + MAIN_PACKAGES);
+			if (MAIN_PACKAGES.size() > 0)
+				MAIN_PACKAGES.forEach((p) -> {
+					context.scan(p);
+				});
+			context.refresh();
+			context.waitForInitializationToComplete();
+		} catch (Exception e) {
+			Builder.LAZY.error("Unexpected error occurred ", e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	private Properties updateAndMergeSystemProperties(Properties properties) {
@@ -157,6 +173,7 @@ public class Rocket implements AutoCloseable {
 
 	private int waitForExistSingal() {
 		try {
+			Builder.LAZY.info("Rocket launched successfully...:)");
 			exitSignal.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -167,6 +184,7 @@ public class Rocket implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		if (this.context != null) {
+			Builder.LAZY.info("Rocket is stopping..:(");
 			this.context.stop();
 			this.context.close();
 			this.context = null;

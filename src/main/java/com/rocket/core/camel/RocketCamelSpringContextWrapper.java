@@ -1,8 +1,11 @@
 package com.rocket.core.camel;
 
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.SmartLifecycle;
@@ -10,6 +13,8 @@ import org.springframework.context.SmartLifecycle;
 import com.rocket.core.annotation.AsyncPostConstruct;
 
 public class RocketCamelSpringContextWrapper implements SmartLifecycle, DisposableBean {
+
+	private Logger l = LoggerFactory.getLogger(RocketCamelSpringContextWrapper.class);
 
 	private SpringCamelContext camelContext;
 	private ApplicationContext appContext;
@@ -26,8 +31,9 @@ public class RocketCamelSpringContextWrapper implements SmartLifecycle, Disposab
 
 	@AsyncPostConstruct
 	public void configure() {
-
-		appContext.getBeansOfType(RouteBuilder.class).values().forEach((route) -> {
+		Map<String, RouteBuilder> beans = appContext.getBeansOfType(RouteBuilder.class);
+		l.info("Routes", beans);
+		beans.values().forEach((route) -> {
 			try {
 				route.addRoutesToCamelContext(camelContext);
 			} catch (Exception e) {
@@ -39,10 +45,10 @@ public class RocketCamelSpringContextWrapper implements SmartLifecycle, Disposab
 
 	@Override
 	public void start() {
-		try {						
+		try {
 			SpringCamelContext.setNoStart(false);
-			camelContext.start();			
-			System.out.println("Routes : " + camelContext.getRoutes());
+			camelContext.start();
+			l.info("Routes : " + camelContext.getRoutes());
 			isRunning = true;
 		} catch (Exception e) {
 			e.printStackTrace();
