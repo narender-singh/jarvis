@@ -1,11 +1,15 @@
 package com.rocket.core;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.rocket.core.configuration.CoreSpringConfiguration;
@@ -39,6 +43,11 @@ public class Rocket implements AutoCloseable {
 	public AnnotationConfigApplicationContext getContext() {
 		return this.context;
 	}
+	
+	public static Rocket configure(){
+		return Builder.getRocket();
+	}
+	
 
 	public static Rocket build() {
 		return Builder.getRocket();
@@ -63,8 +72,20 @@ public class Rocket implements AutoCloseable {
 	}
 
 	private static class Builder {
+		
+		public static Logger LAZY  = LoggerFactory.getLogger(Rocket.Builder.class);
+		
 		private static final Rocket rocket = new Rocket();
 
+		static{
+			rocket.properties = new Properties();
+			try {
+				rocket.properties.load(new FileInputStream("default.properties"));
+			} catch (IOException e) {
+				LAZY.warn("default.properties file not found");
+			}
+		}
+		
 		private static Rocket getRocket() {
 			return rocket;
 		}

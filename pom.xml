@@ -175,7 +175,16 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
-			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -291,19 +300,19 @@
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
 											<minimum>0.0</minimum>
-											<!--<minimum>0.4</minimum>-->
+											<!--<minimum>0.4</minimum> -->
 										</limit>
 										<limit implementation="org.jacoco.report.check.Limit">
 											<counter>CLASS</counter>
 											<value>COVEREDRATIO</value>
 											<minimum>0.0</minimum>
-											<!--<minimum>0.5</minimum>-->
+											<!--<minimum>0.5</minimum> -->
 										</limit>
 										<limit implementation="org.jacoco.report.check.Limit">
 											<counter>METHOD</counter>
 											<value>COVEREDRATIO</value>
 											<minimum>0.0</minimum>
-											<!--<minimum>0.4</minimum>-->
+											<!--<minimum>0.4</minimum> -->
 										</limit>
 									</limits>
 								</rule>

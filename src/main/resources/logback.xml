@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" packagingData="true">
+
+	<appender name="file"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${rocket.logdir}/${rocket.applicationName}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${rocket.logdir}/${rocket.applicationName}.%d{yyyy-MM-dd}.log.gz
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class='com.rocket.core.logging.RLogFormatter' />
+		</encoder>
+	</appender>
+
+	<appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>1024</queueSize>
+		<discardingThreshold>0</discardingThreshold>
+		<appender-ref ref="file" />
+	</appender>
+
+
+
+	<logger name="org.apache.camel.component.jetty" additivity="false"
+		level="INFO">
+		<appender-ref ref="async" />
+	</logger>
+
+	<logger name="rocket" additivity="false" level="INFO">
+		<appender-ref ref="async" />
+	</logger>
+	<root level="ERROR">
+		<appender-ref ref="async" />
+	</root>
+</configuration>
+
+  
+         
