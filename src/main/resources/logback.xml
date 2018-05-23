@@ -27,10 +27,10 @@
 		<appender-ref ref="async" />
 	</logger>
 
-	<logger name="rocket" additivity="false" level="INFO">
+<!-- 	<logger name="rocket" additivity="false" level="INFO">
 		<appender-ref ref="async" />
-	</logger>
-	<root level="ERROR">
+	</logger> -->
+	<root level="INFO">
 		<appender-ref ref="async" />
 	</root>
 </configuration>

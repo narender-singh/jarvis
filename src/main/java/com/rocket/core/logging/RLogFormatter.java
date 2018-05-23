@@ -21,7 +21,7 @@ import com.rocket.core.utils.RocketUtils;
 
 public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
-	private static final DateTimeFormatter D_F = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("IST"));
+	private static final DateTimeFormatter D_F = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Asia/Kolkata"));
 
 	private static final ObjectWriter JSON_WRITER;
 
@@ -49,28 +49,31 @@ public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
 	@Override
 	public String doLayout(ILoggingEvent event) {
-
-		StringBuilder result = getSB();
-		result.append("{\"ts\": \"");
-		result.append(D_F.format(Instant.ofEpochMilli(event.getTimeStamp())));
-		result.append("\", \"tid\": \"");
-		result.append(event.getThreadName());
-		result.append("\", \"level\": ");
-		result.append(event.getLevel());
-		result.append("\", \"class\": ");
 		try {
-			RocketUtils.writeAbreviatedClassName(event.getLoggerName(), result);
-			result.append('\"');
-			Set<? extends Throwable> throwables = writeMessage(event, result);
-			if (throwables.size() > 0)
-				appendThrowables(event, throwables, result);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+			StringBuilder result = getSB();
+			result.append("{\"ts\": \"");
+			result.append(D_F.format(Instant.ofEpochMilli(event.getTimeStamp())));
+			result.append("\", \"tid\": \"");
+			result.append(event.getThreadName());
+			result.append("\", \"level\": ");
+			result.append(event.getLevel());			
+			try {
+				result.append("\", \"class\": ");
+				RocketUtils.writeAbreviatedClassName(event.getLoggerName(), result);
+				result.append('\"');
+				Set<? extends Throwable> throwables = writeMessage(event, result);
+				if (throwables.size() > 0)
+					appendThrowables(event, throwables, result);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			result.append("}\n");
+			String log = result.toString();
+			recycleSB(result);
+			return log;
+		} catch (Exception e) {
+			return null;
 		}
-		result.append('}');
-		String log = result.toString();
-		recycleSB(result);
-		return log;
 	}
 
 	private static void appendThrowables(ILoggingEvent event, Set<? extends Throwable> throwables, StringBuilder res)
@@ -165,7 +168,7 @@ public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 				if (o instanceof Throwable) {
 					exceptions.add((Throwable) o);
 				} else if (o instanceof Map || o instanceof Map.Entry) {
-					app.append(",\"extras" + extra++ + " \":").append(JSON_WRITER.writeValueAsString(o));
+					app.append(",\"extras" + extra++ + " \":").append(o.toString());
 				} else {
 					app.append(",\"extras" + extra++ + " \": \"" + o + '\"');
 				}
