@@ -23,11 +23,11 @@ public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
 	private static final DateTimeFormatter D_F = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Asia/Kolkata"));
 
-	private static final ObjectWriter JSON_WRITER;
+	/*private static final ObjectWriter JSON_WRITER;
 
 	static {
 		JSON_WRITER = (new ObjectMapper()).writer();
-	}
+	}*/
 
 	public static final ThreadLocal<StringBuilder> S_B = new ThreadLocal<StringBuilder>() {
 		@Override

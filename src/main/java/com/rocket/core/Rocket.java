@@ -1,6 +1,5 @@
 package com.rocket.core;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -26,8 +25,7 @@ public final class Rocket implements AutoCloseable {
 	private CountDownLatch exitSignal = new CountDownLatch(1);
 	private int exitCode = 0;
 	private static boolean isStarted = false;
-	private volatile RocketSpringContext context;
-	@SuppressWarnings("unused")
+	private volatile RocketSpringContext context;	
 	private RocketPropertySource propSource;
 	private Properties originalSystemProperties;
 
@@ -148,6 +146,10 @@ public final class Rocket implements AutoCloseable {
 			isStarted = true;
 		}
 		return this;
+	}
+
+	public RocketPropertySource getPropertySource() {
+		return this.propSource;
 	}
 
 	public void launchAndWait() {

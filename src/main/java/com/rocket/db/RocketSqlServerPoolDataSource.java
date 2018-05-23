@@ -19,10 +19,8 @@ public final class RocketSqlServerPoolDataSource {
 
 	private final int initialPoolsize;
 	private final int maxPoolSize;
-	@SuppressWarnings("unused")
-	private final int inactiveConnectionTimeout;
-	@SuppressWarnings("unused")
-	private final int timeoutCheckInterval;
+/*	private final int inactiveConnectionTimeout;
+	private final int timeoutCheckInterval;*/
 	private final String poolName;
 	private final String userName;
 	private final String serverName;
@@ -51,8 +49,8 @@ public final class RocketSqlServerPoolDataSource {
 		this.dbName = db;
 		this.initialPoolsize = initialPoolsiz;
 		this.maxPoolSize = maxPoolsize;
-		this.inactiveConnectionTimeout = inactiveTimeout;
-		this.timeoutCheckInterval = checkTimeout;
+		/*this.inactiveConnectionTimeout = inactiveTimeout;
+		this.timeoutCheckInterval = checkTimeout;*/
 		poolProperties = new Properties();
 		sqlPoolConnectionSource = new SQLServerConnectionPoolDataSource();
 		poolMap = new HashMap<>();

@@ -16,7 +16,7 @@ import com.rocket.core.annotation.AsyncPostConstruct;
 
 public class AsyncPostConstructBeanPostProcessor implements BeanPostProcessor {
 
-	Map<Object, Future<Object>> asyncInitializations;
+	private Map<Object, Future<Object>> asyncInitializations;
 
 	public AsyncPostConstructBeanPostProcessor() {
 		asyncInitializations = new HashMap<>();
