@@ -1,4 +1,4 @@
-package com.rocket.db;
+package com.rocket.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import org.apache.commons.lang.IncompleteArgumentException;
 
 import com.microsoft.sqlserver.jdbc.SQLServerConnectionPoolDataSource;
 
-public final class RocketSqlServerPoolDataSource {
+public final class RocketSqlServerConnectionPool{
 
 	private final int initialPoolsize;
 	private final int maxPoolSize;
@@ -34,12 +34,12 @@ public final class RocketSqlServerPoolDataSource {
 
 	private static final DBSourceBuilder BUILDER_INSTANCE = new DBSourceBuilder();
 
-	private RocketSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
+	private RocketSqlServerConnectionPool(String poolName, String serverName, int portNo, String user, String passwd,
 			String db) {
 		this(poolName, serverName, portNo, user, passwd, db, 1, 5, 600000, 600000);
 	}
 
-	private RocketSqlServerPoolDataSource(String poolName, String serverName, int portNo, String user, String passwd,
+	private RocketSqlServerConnectionPool(String poolName, String serverName, int portNo, String user, String passwd,
 			String db, int initialPoolsiz, int maxPoolsize, int inactiveTimeout, int checkTimeout) {
 		this.poolName = poolName;
 		this.serverName = serverName;
@@ -198,12 +198,12 @@ public final class RocketSqlServerPoolDataSource {
 			return this;
 		}
 
-		public RocketSqlServerPoolDataSource build() throws IncompleteArgumentException {
+		public RocketSqlServerConnectionPool build() throws IncompleteArgumentException {
 			if (null == serverName)
 				throw new IncompleteArgumentException("userName is must for the connection");
 			if (null == password)
 				throw new IncompleteArgumentException("userName is must for the connection");
-			return new RocketSqlServerPoolDataSource(poolName, serverName, portNo, userName, password, dbName,
+			return new RocketSqlServerConnectionPool(poolName, serverName, portNo, userName, password, dbName,
 					initialPoolsize, maxPoolSize, inactiveConnectionTimeout, timeoutCheckInterval);
 		}
 	}

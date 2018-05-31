@@ -5,4 +5,4 @@
  * @author nasingh
  *
  */
-package com.rocket.db;
+package com.rocket.jdbc;
