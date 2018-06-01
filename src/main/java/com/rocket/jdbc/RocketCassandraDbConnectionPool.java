@@ -1,5 +1,9 @@
 package com.rocket.jdbc;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.HostDistance;
 import com.datastax.driver.core.PoolingOptions;
@@ -11,7 +15,7 @@ import com.datastax.driver.core.policies.ExponentialReconnectionPolicy;
 import com.datastax.driver.core.policies.ReconnectionPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
 
-public class RocketCassandraDbConnectionPool {
+public final class RocketCassandraDbConnectionPool {
 
 	private static final PoolBuilder BUILDER_INSTANCE = new PoolBuilder();
 
@@ -34,6 +38,7 @@ public class RocketCassandraDbConnectionPool {
 	public static class PoolBuilder {
 
 		private String clusterName = "test_cluster";
+		private List<String> servers = new LinkedList<>();
 		private int port = ProtocolOptions.DEFAULT_PORT;
 		private ProtocolVersion protocolVersion = ProtocolVersion.NEWEST_SUPPORTED;
 		private ReconnectionPolicy reconnectPolicy = new ExponentialReconnectionPolicy(0, 120000);
@@ -50,7 +55,7 @@ public class RocketCassandraDbConnectionPool {
 		};
 
 		private PoolBuilder() {
-
+			servers.add("localhost");
 		}
 
 		public PoolBuilder withClusterName(String name) {
@@ -73,6 +78,17 @@ public class RocketCassandraDbConnectionPool {
 			return this;
 		}
 
+		public PoolBuilder withContactPoint(String server){
+			servers.add(server);
+			return this;
+		}
+		
+		public PoolBuilder withContactPoints(String... servers){
+			this.servers.addAll(Arrays.asList(servers));
+			return this;
+		}
+		
+		
 		public PoolBuilder withRetryPolicy(RetryPolicy policy) {
 			this.retryPolicy = policy;
 			return this;
@@ -91,7 +107,7 @@ public class RocketCassandraDbConnectionPool {
 
 		public RocketCassandraDbConnectionPool build() {
 
-			Cluster cluster = Cluster.builder().withClusterName(clusterName).withPort(port)
+			Cluster cluster = Cluster.builder().withClusterName(clusterName).withPort(port).addContactPoints(servers.toArray(new String[servers.size()]))
 					.withProtocolVersion(protocolVersion).withReconnectionPolicy(reconnectPolicy)
 					.withRetryPolicy(retryPolicy).withCredentials(userName, password).withPoolingOptions(poolOptions)
 					.build();
@@ -100,3 +116,4 @@ public class RocketCassandraDbConnectionPool {
 	}
 
 }
+;
