@@ -41,7 +41,7 @@ public final class RocketCassandraDbConnectionPool {
 		private List<String> servers = new LinkedList<>();
 		private int port = ProtocolOptions.DEFAULT_PORT;
 		private ProtocolVersion protocolVersion = ProtocolVersion.NEWEST_SUPPORTED;
-		private ReconnectionPolicy reconnectPolicy = new ExponentialReconnectionPolicy(0, 120000);
+		private ReconnectionPolicy reconnectPolicy = new ExponentialReconnectionPolicy(1, 120000);
 		private RetryPolicy retryPolicy = DefaultRetryPolicy.INSTANCE;
 		private String userName = null;
 		private String password = null;
