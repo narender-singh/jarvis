@@ -114,6 +114,4 @@ public final class RocketCassandraDbConnectionPool {
 			return new RocketCassandraDbConnectionPool(cluster);
 		}
 	}
-
 }
-;

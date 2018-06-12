@@ -9,15 +9,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.rocket.core.utils.RocketUtils;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.LayoutBase;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.rocket.core.utils.RocketUtils;
 
 public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
