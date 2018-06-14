@@ -19,7 +19,7 @@ import ch.qos.logback.core.LayoutBase;
 
 public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
-	private static final DateTimeFormatter D_F = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Asia/Kolkata"));
+	private static final DateTimeFormatter D_F = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
 
 	/*private static final ObjectWriter JSON_WRITER;
 
