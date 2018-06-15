@@ -5,7 +5,6 @@ import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBus;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.rocket.core.RocketSpringContext;
 import com.rocket.core.annotation.InstantiateFirst;
-import com.rocket.core.camel.JsonProvider;
 import com.rocket.core.camel.NoAutoStartSpringCamelContext;
 import com.rocket.core.camel.RocketCamelPropertiesResolver;
 import com.rocket.core.camel.RocketCamelSpringContextWrapper;
@@ -34,14 +32,8 @@ public class CamelConfiguration implements ApplicationContextAware {
 
 	@Bean
 	@InstantiateFirst
-	public BusFactory cxfbusFactory()
-	{
+	public BusFactory cxfbusFactory() {
 		return new RocketSpringCxfBusFactory(springContext);
-	}
-	
-	@Bean
-	public JacksonJsonProvider jsonProvider() {
-		return new JsonProvider();
 	}
 
 	@Bean
