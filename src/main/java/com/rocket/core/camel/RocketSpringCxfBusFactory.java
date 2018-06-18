@@ -11,19 +11,22 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.message.Message;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.rocket.core.camel.cxf.jaxrs.providers.RocketExceptionMapper;
+
 public final class RocketSpringCxfBusFactory extends SpringBusFactory implements ApplicationContextAware {
 
 	private static ApplicationContext appContext;
-	
-	public RocketSpringCxfBusFactory(){	
+
+	public RocketSpringCxfBusFactory() {
 		super(appContext);
 	}
-	
+
 	public RocketSpringCxfBusFactory(ApplicationContext ctx) {
 		super(ctx);
 	}
@@ -40,11 +43,14 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 			bus.getInFaultInterceptors().addAll(provider.getInFaultInterceptors());
 		}
 		ServerProviderFactory sf = ServerProviderFactory.createInstance(bus);
-		final ArrayList<Object> userProviders = new ArrayList<>();
-		userProviders.add(new JacksonJsonProvider());
-		sf.setUserProviders(userProviders);
+		final ArrayList<Object> rocketProviders = new ArrayList<>();
+		rocketProviders.add(new JacksonJsonProvider());
+		rocketProviders.add(new RocketExceptionMapper());
+		ServiceLoader<UserJaxRsProvider> userProviders = ServiceLoader.load(UserJaxRsProvider.class);
+		userProviders.forEach(x -> rocketProviders.add(x));
+		sf.setUserProviders(rocketProviders);
 		bus.setProperty("jaxrs.shared.server.factory", sf);
-		bus.setProperty("org.apache.cxf.jaxrs.bus.providers", userProviders);
+		bus.setProperty("org.apache.cxf.jaxrs.bus.providers", rocketProviders);
 		BusFactory.setDefaultBus(bus);
 		BusFactory.setThreadDefaultBus(bus);
 		return bus;
@@ -52,6 +58,6 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		appContext = applicationContext;		
+		appContext = applicationContext;
 	}
 }

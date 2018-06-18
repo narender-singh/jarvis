@@ -34,8 +34,7 @@ public class RocketTest {
 		HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
 		HttpRequest request = requestFactory.buildGetRequest(new GenericUrl("http://localhost:" + portNo + "/test"));
 		JsonNode response = OM.readTree(request.execute().parseAsString());
-		Assert.assertEquals("key",response.get("key").asText());
-		Assert.assertEquals("value",response.get("value").asText());
+		Assert.assertEquals("value",response.get("key").asText());		
 		r.close();
 	}
 
