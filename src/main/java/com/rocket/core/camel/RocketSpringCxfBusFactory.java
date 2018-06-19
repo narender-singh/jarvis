@@ -9,7 +9,12 @@ import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorProvider;
+import org.apache.cxf.jaxrs.provider.BinaryDataProvider;
+import org.apache.cxf.jaxrs.provider.FormEncodingProvider;
+import org.apache.cxf.jaxrs.provider.MultipartProvider;
+import org.apache.cxf.jaxrs.provider.PrimitiveTextProvider;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
+import org.apache.cxf.jaxrs.provider.StringTextProvider;
 import org.apache.cxf.message.Message;
 
 import org.springframework.beans.BeansException;
@@ -46,6 +51,12 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 		final ArrayList<Object> rocketProviders = new ArrayList<>();
 		rocketProviders.add(new JacksonJsonProvider());
 		rocketProviders.add(new RocketExceptionMapper());
+		rocketProviders.add(new StringTextProvider());
+		rocketProviders.add(new PrimitiveTextProvider<Object>());
+		rocketProviders.add(new BinaryDataProvider<Object>());
+		rocketProviders.add(new MultipartProvider());
+		rocketProviders.add(new FormEncodingProvider<Object>());
+
 		ServiceLoader<UserJaxRsProvider> userProviders = ServiceLoader.load(UserJaxRsProvider.class);
 		userProviders.forEach(x -> rocketProviders.add(x));
 		sf.setUserProviders(rocketProviders);

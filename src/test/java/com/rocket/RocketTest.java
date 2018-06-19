@@ -25,8 +25,8 @@ import com.rocket.core.Rocket;
 
 public class RocketTest {
 
-	private static final ObjectMapper OM = new ObjectMapper(); 
-	
+	private static final ObjectMapper OM = new ObjectMapper();
+
 	@Test
 	public void rocketbuildTest() throws Exception {
 		Rocket r = Rocket.build().withClasses(Beans.class, Routes.class).initialize().start();
@@ -34,7 +34,7 @@ public class RocketTest {
 		HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
 		HttpRequest request = requestFactory.buildGetRequest(new GenericUrl("http://localhost:" + portNo + "/test"));
 		JsonNode response = OM.readTree(request.execute().parseAsString());
-		Assert.assertEquals("value",response.get("key").asText());		
+		Assert.assertEquals("value", response.get("key").asText());
 		r.close();
 	}
 
@@ -67,5 +67,4 @@ public class RocketTest {
 			return new AbstractMap.SimpleEntry<String, String>("key", "value");
 		}
 	}
-
 }
