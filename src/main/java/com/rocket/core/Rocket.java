@@ -25,14 +25,22 @@ public final class Rocket implements AutoCloseable {
 	private CountDownLatch exitSignal = new CountDownLatch(1);
 	private int exitCode = 0;
 	private static boolean isStarted = false;
-	private volatile RocketSpringContext context;	
+	private volatile RocketSpringContext context;
 	private RocketPropertySource propSource;
 	private Properties originalSystemProperties;
+
+	public static final String ROCKET_APPNAME = "rocket.applicationName";
+	public static final String ROCKET_PORT = "http.portNo";
 
 	/**
 	 * Private constructor singleton class
 	 */
 	private Rocket() {
+	}
+
+	public Rocket withEnv(Env env) {
+		Habitat.setEnv(env);
+		return this;
 	}
 
 	public Properties getProperties() {
