@@ -21,7 +21,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 
 	private final GenericUrl url;
 
-	private final int timeoutMillis;
+	private final int timeOutMillis;
 	private final MediaType contentType;
 	private final HttpMethod method;
 	private final Map<String, List<String>> userHeaders;
@@ -54,7 +54,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 		this.contentType = type;
 		this.userHeaders = headers;
 		this.requestObject = requestObject;
-		this.timeoutMillis = timeoutMillis;
+		this.timeOutMillis = timeoutMillis;
 
 	}
 
@@ -65,14 +65,14 @@ public class RestRequest<REQ> implements JsonSerializable {
 	public static class Builder<REQ> {
 		private GenericUrl url;
 
-		private int timeoutMillis;
+		private int timeOutMillis;
 		private MediaType contentType;
 		private HttpMethod method;
 		private Map<String, List<String>> userHeaders = Maps.newHashMap();
 		private REQ requestObject;
 
 		public Builder() {
-			timeoutMillis = 60000;
+			timeOutMillis = 60000;
 			contentType = MediaType.APPLICATION_JSON;
 			method = HttpMethod.GET;
 		}
@@ -97,8 +97,8 @@ public class RestRequest<REQ> implements JsonSerializable {
 			return this;
 		}
 
-		public Builder<REQ> withTimeOutMillis(int timeoutMillis) {
-			this.timeoutMillis = timeoutMillis;
+		public Builder<REQ> withTimeOutMillis(int timeOutMillis) {
+			this.timeOutMillis = timeOutMillis;
 			return this;
 		}
 
@@ -108,7 +108,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 		}
 
 		public RestRequest<REQ> build() {
-			return new RestRequest<>(url, method, contentType, userHeaders, timeoutMillis, requestObject);
+			return new RestRequest<>(url, method, contentType, userHeaders, timeOutMillis, requestObject);
 		}
 
 		public RestRequest<REQ> buildOptions(final GenericUrl url) {
@@ -132,12 +132,12 @@ public class RestRequest<REQ> implements JsonSerializable {
 		}
 
 		public <T> RestRequest<T> buildMethod(final HttpMethod method, final GenericUrl url, final T content) {
-			return new RestRequest<T>(url, method, contentType, userHeaders, timeoutMillis, content);
+			return new RestRequest<T>(url, method, contentType, userHeaders, timeOutMillis, content);
 		}
 
 	}
 
-	private HttpMethod getMethod() {
+	public HttpMethod getMethod() {
 		return this.method;
 	}
 
@@ -150,7 +150,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 	}
 
 	public int getTimeoutMillis() {
-		return timeoutMillis;
+		return timeOutMillis;
 	}
 
 	public MediaType getContentType() {
@@ -167,7 +167,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 		gen.writeFieldName("url");
 		gen.writeObject(this.url);
 		gen.writeFieldName("method");
-		gen.writeString(this.getMethod().toString());
+		gen.writeString(this.method.toString());
 		gen.writeFieldName("payload");
 		gen.writeObject(this.requestObject);
 		gen.writeEndObject();
