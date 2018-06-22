@@ -1,27 +1,45 @@
 package com.rocket.core.http;
 
-import org.slf4j.LoggerFactory;
-
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
-import org.eclipse.jetty.http.HttpMethod;
+import javax.ws.rs.core.Form;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import com.google.api.client.http.AbstractHttpContent;
+import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpMediaType;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.http.UrlEncodedContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.http.json.JsonHttpContent;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.common.io.ByteStreams;
 import com.rocket.core.Habitat;
-import com.rocket.core.StaticHolder;
+import com.rocket.core.utils.JsonUtils;
+import com.rocket.core.utils.RocketUtils;
 
 public final class RestClient {
 
@@ -43,83 +61,193 @@ public final class RestClient {
 	private static final MediaType DEFAULT_MEDIATYPE = MediaType.APPLICATION_JSON;
 	private static final int DEFAULT_TIMEOUT_MILLIS = 60000;
 
-	private static final int ARRAY_START = "[".getBytes(StandardCharsets.UTF_8)[0] & 0xff;
-
 	private RestClient() {
 	}
 
-	public static HttpResponse get(final String url) throws URISyntaxException {
+	public static HttpResponse get(final String url) throws URISyntaxException, IOException {
 		return get(url, DEFAULT_MEDIATYPE);
 	}
 
-	public static HttpResponse get(final String url, final MediaType contentType) throws URISyntaxException {
-		return get(RestRequest.newBuilder().withContentType(contentType).buildGet(new GenericUrl(new URI(url))), null);
+	public static HttpResponse get(final String url, final MediaType contentType)
+			throws URISyntaxException, IOException {
+		return (HttpResponse) get(
+				RestRequest.newBuilder().withContentType(contentType).buildGet(new GenericUrl(new URI(url))), null)
+						.getContent();
 	}
 
-	public static <RESP> RESP get(final String url, final Class<RESP> returnType) throws URISyntaxException {
+	public static <RESP> ResponseDetail<RESP> get(final String url, final Class<RESP> returnType)
+			throws URISyntaxException, IOException {
 		return get(url, DEFAULT_MEDIATYPE, DEFAULT_TIMEOUT_MILLIS, returnType);
 	}
 
-	public static <RESP> RESP get(final String url, final MediaType contentType, final Class<RESP> returnType)
-			throws URISyntaxException {
+	public static <RESP> ResponseDetail<RESP> get(final String url, final MediaType contentType,
+			final Class<RESP> returnType) throws URISyntaxException, IOException {
 		return get(url, contentType, DEFAULT_TIMEOUT_MILLIS, returnType);
 	}
 
-	public static <RESP> RESP get(final String url, final MediaType contentType, final int timeOutMillis,
-			final Class<RESP> returnType) throws URISyntaxException {
+	public static <RESP> ResponseDetail<RESP> get(final String url, final MediaType contentType,
+			final int timeOutMillis, final Class<RESP> returnType) throws URISyntaxException, IOException {
 		return get(RestRequest.newBuilder().withContentType(contentType).withTimeOutMillis(timeOutMillis)
 				.buildGet(new GenericUrl(new URI(url))), returnType);
 	}
 
-	public static <REQ, RESP> RESP get(RestRequest<REQ> req, Class<RESP> returnType) {
-		return null;
+	public static <REQ, RESP> ResponseDetail<RESP> get(RestRequest<REQ> req, Class<RESP> returnType)
+			throws IOException {
+		return doHttpRequest(req, new ResponseDetail<RESP>(returnType));
 	}
 
-	public static <RESP, REQ> Future<RESP> doHttpRequest(RestRequest<REQ> request, Class<RESP> returnType)
-			throws IOException {
+	public static <RESP, REQ> ResponseDetail<RESP> doHttpRequest(RestRequest<REQ> request,
+			ResponseDetail<RESP> returnType) throws IOException {
 
+		REQ object = request.getRequestObject();
+		Class<?> contentClass = null;
+		if (object != null)
+			contentClass = object.getClass();
 		HttpContent content = null;
 		HttpHeaders reqheaders = null;
 		HttpRequest http = null;
 		switch (request.getMethod()) {
 		case GET:
 			http = HTTP_REQUEST_FACTORY.buildGetRequest(request.getUrl());
-			reqheaders = http.getHeaders();
 			break;
 		case POST:
 		case PUT:
+			if (Form.class.equals(contentClass)) {
+				content = new UrlEncodedContent(((Form) object).asMap());
+			} else if (CharSequence.class.equals(contentClass)) {
+				content = new AbstractHttpContent(request.getContentType().getMimeType()) {
+
+					@Override
+					public void writeTo(OutputStream out) throws IOException {
+						BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+						writer.write(object.toString());
+						writer.flush();
+					}
+				};
+			} else if (byte[].class.equals(contentClass)) {
+				content = new ByteArrayContent(request.getContentType().getMimeType(), (byte[]) object);
+			} else if (InputStream.class.equals(contentClass)) {
+				content = new InputStreamContent(request.getContentType().getMimeType(), (InputStream) object);
+			} else {
+				content = new JsonHttpContent(new JacksonFactory(), object);
+			}
+			http = HTTP_REQUEST_FACTORY.buildRequest(request.getMethod().toString(), request.getUrl(), content);
 			break;
 		case OPTIONS:
 			http = HTTP_REQUEST_FACTORY.buildRequest("OPTIONS", request.getUrl(), null);
-			reqheaders = http.getHeaders();
 			break;
 		case DELETE:
 			http = HTTP_REQUEST_FACTORY.buildDeleteRequest(request.getUrl());
-			reqheaders = http.getHeaders();
 			break;
 		default:
 			throw new RuntimeException("Unsupported or unknown http method");
 		}
-
-		return StaticHolder.getDefaultExecutor().submit(new RequestCallable<REQ, RESP>(request, http, returnType));
+		reqheaders = http.getHeaders();
+		for (Entry<String, List<String>> header : request.getUserHeaders().entrySet()) {
+			String key = header.getKey();
+			if (reqheaders.containsKey(key))
+				LOG.info("Replacing default header {} default value {} with user value{}", key, reqheaders.get(key),
+						header.getValue());
+			reqheaders.put(key, header.getValue());
+		}
+		// return StaticHolder.getDefaultExecutor().submit(new
+		// RequestCallable<REQ, RESP>(http, returnType)).get();
+		try {
+			return (new RequestCallable<REQ, RESP>(http, returnType)).call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private static class RequestCallable<REQ, RESP> implements Callable<RESP> {
+	private static class RequestCallable<REQ, RESP> implements Callable<ResponseDetail<RESP>> {
 
 		private final HttpRequest httpRequest;
-		private final RestRequest<REQ> restRequest;
-		private final Class<RESP> returnType;
+		private final ResponseDetail<RESP> httpResponse;
 
-		public RequestCallable(RestRequest<REQ> restReq, HttpRequest req, Class<RESP> responseType) {
+		public RequestCallable(HttpRequest req, ResponseDetail<RESP> responseType) {
 			this.httpRequest = req;
-			this.restRequest = restReq;
-			this.returnType = responseType;
+			this.httpResponse = responseType;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public RESP call() throws Exception {
-			return null;
+		public ResponseDetail<RESP> call() throws Exception {
+			HttpResponse response = httpRequest.execute();
+			handleErrorResponse(response);
+			httpResponse.setHeaders(response.getHeaders());
+			httpResponse.setStatusCode(response.getStatusCode());
+			if (response.getClass().equals(httpResponse.getReturnType())) {
+				httpResponse.setContent((RESP) response);
+
+			} else {
+				doResponseConversion(response);
+			}
+			return httpResponse;
 		}
+
+		public static void handleErrorResponse(HttpResponse response) throws IOException {
+			if (!response.isSuccessStatusCode()) {
+				InputStream stream = response.getContent();
+				if (stream != null) {
+					LOG.error("Error from server {}", response.parseAsString());
+				}
+				throw new HttpResponseException(response);
+			}
+		}
+
+		public void doResponseConversion(HttpResponse response)
+				throws IOException, JAXBException, SAXException, ParserConfigurationException {
+			InputStream content = response.getContent();
+			if (content == null)
+				return;
+			httpResponse.setContent(
+					parseObject(response.getMediaType(), response.getContent(), httpResponse.getReturnType()));
+		}
+
+		@SuppressWarnings("unchecked")
+		public RESP parseObject(HttpMediaType type, InputStream in, Class<RESP> res)
+				throws JAXBException, SAXException, IOException, ParserConfigurationException {
+			MediaType responseType = MediaType.parse(type.getType(), type.getSubType());
+			switch (responseType) {
+
+			case APPLICATION_OCTETSTREAM:
+				if (byte[].class.equals(res)) {
+					return (RESP) ByteStreams.toByteArray(in);
+				}
+			case APPLICATION_JSON:
+				return JsonUtils.Deserialize(in, res);
+			case APPLICATION_XML:
+				return RocketUtils.readPojoFromXml(in, res);
+			case TEXT_CSV:
+			case TEXT_HTML:
+			case TEXT_PLAIN:
+			case TEXT_XML:
+			case IMAGE_JPEG:
+			case IMAGE_PNG:
+			case IMAGE_ANY:
+			case APPLICATION_PDF:
+			case APPLICATION_XLS:
+			case APPLICATION_XLSX:
+			case APPLICATION_DOC:
+			case APPLICATION_DOCX:
+			case WILDCARD:
+				return parseStringOrByte(in, res, type);
+			default:
+				throw new RuntimeException("Unsupported content type " + type.getType() + "/" + type.getSubType());
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		private RESP parseStringOrByte(InputStream in, Class<RESP> res, HttpMediaType type) throws IOException {
+			if (byte[].class.equals(res)) {
+				return (RESP) ByteStreams.toByteArray(in);
+			} else if (CharSequence.class.equals(res)) {
+				return (RESP) new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
+			} else {
+				throw new RuntimeException("Unsupported mediaType : " + type.getType() + "/" + type.getSubType());
+			}
+		}
+
 	}
 
 }

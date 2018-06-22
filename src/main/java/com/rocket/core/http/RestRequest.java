@@ -23,35 +23,46 @@ public class RestRequest<REQ> implements JsonSerializable {
 
 	private final int timeOutMillis;
 	private final MediaType contentType;
+	private final MediaType acceptMediaType;
+
 	private final HttpMethod method;
 	private final Map<String, List<String>> userHeaders;
 
 	public RestRequest(final GenericUrl url) {
-		this(url, HttpMethod.GET, MediaType.APPLICATION_JSON, null, DEFAULT_TIMEOUT_MILLISECONDS, null);
+		this(url, HttpMethod.GET, MediaType.TEXT_PLAIN, MediaType.TEXT_PLAIN, null, DEFAULT_TIMEOUT_MILLISECONDS, null);
 	}
 
 	public RestRequest(final GenericUrl url, final HttpMethod method, final REQ requestObject) {
-		this(url, method, MediaType.APPLICATION_JSON, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
+		this(url, method, MediaType.TEXT_PLAIN, MediaType.TEXT_PLAIN, null, DEFAULT_TIMEOUT_MILLISECONDS,
+				requestObject);
 	}
 
-	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType type, final REQ requestObject) {
-		this(url, method, type, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
+	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType contentType,
+			final REQ requestObject) {
+		this(url, method, contentType, contentType, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
 	}
 
-	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType type,
-			final Map<String, List<String>> headers, final REQ requestObject) {
-		this(url, method, type, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
+	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType contentType,
+			final MediaType acceptMediaType, final REQ requestObject) {
+		this(url, method, contentType, acceptMediaType, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
 	}
 
-	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType type,
-			final Map<String, List<String>> headers, final int timeoutMillis, final REQ requestObject) {
+	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType contentType,
+			final MediaType acceptMediaType, final Map<String, List<String>> headers, final REQ requestObject) {
+		this(url, method, contentType, acceptMediaType, null, DEFAULT_TIMEOUT_MILLISECONDS, requestObject);
+	}
+
+	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType contentType,
+			final MediaType acceptMediaType, final Map<String, List<String>> headers, final int timeoutMillis,
+			final REQ requestObject) {
 		if (!(method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT)) && requestObject != null)
 			throw new IllegalArgumentException("Cannot have request content for method" + method);
 		if (url == null)
 			throw new IllegalArgumentException("Url is a mandatory parameter");
 		this.url = url;
 		this.method = method;
-		this.contentType = type;
+		this.contentType = contentType;
+		this.acceptMediaType = acceptMediaType;
 		this.userHeaders = headers;
 		this.requestObject = requestObject;
 		this.timeOutMillis = timeoutMillis;
@@ -63,22 +74,28 @@ public class RestRequest<REQ> implements JsonSerializable {
 	}
 
 	public static class Builder<REQ> {
-		private GenericUrl url;
-
+		// private GenericUrl url;
+		private MediaType acceptMediaType;
 		private int timeOutMillis;
 		private MediaType contentType;
-		private HttpMethod method;
+		// private HttpMethod method;
 		private Map<String, List<String>> userHeaders = Maps.newHashMap();
-		private REQ requestObject;
+		// private REQ requestObject;
 
 		public Builder() {
 			timeOutMillis = 60000;
-			contentType = MediaType.APPLICATION_JSON;
-			method = HttpMethod.GET;
+			contentType = MediaType.TEXT_PLAIN;
+			acceptMediaType = MediaType.TEXT_PLAIN;
+			// method = HttpMethod.GET;
 		}
 
-		public Builder<REQ> withUrl(GenericUrl url) {
-			this.url = url;
+		// public Builder<REQ> withUrl(GenericUrl url) {
+		// this.url = url;
+		// return this;
+		// }
+
+		public Builder<REQ> withAcceptMediaType(MediaType accept) {
+			this.acceptMediaType = accept;
 			return this;
 		}
 
@@ -87,10 +104,10 @@ public class RestRequest<REQ> implements JsonSerializable {
 			return this;
 		}
 
-		public Builder<REQ> withMethod(HttpMethod method) {
-			this.method = method;
-			return this;
-		}
+		// public Builder<REQ> withMethod(HttpMethod method) {
+		// this.method = method;
+		// return this;
+		// }
 
 		public Builder<REQ> withHeaders(Map<String, List<String>> headers) {
 			userHeaders.putAll(headers);
@@ -102,14 +119,15 @@ public class RestRequest<REQ> implements JsonSerializable {
 			return this;
 		}
 
-		public Builder<REQ> withRequestObject(REQ reqObj) {
-			this.requestObject = reqObj;
-			return this;
-		}
+		// public Builder<REQ> withRequestObject(REQ reqObj) {
+		// this.requestObject = reqObj;
+		// return this;
+		// }
 
-		public RestRequest<REQ> build() {
-			return new RestRequest<>(url, method, contentType, userHeaders, timeOutMillis, requestObject);
-		}
+		// public RestRequest<REQ> build() {
+		// return new RestRequest<>(url, method, contentType, userHeaders,
+		// timeOutMillis, requestObject);
+		// }
 
 		public RestRequest<REQ> buildOptions(final GenericUrl url) {
 			return buildMethod(HttpMethod.OPTIONS, url, null);
@@ -132,7 +150,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 		}
 
 		public <T> RestRequest<T> buildMethod(final HttpMethod method, final GenericUrl url, final T content) {
-			return new RestRequest<T>(url, method, contentType, userHeaders, timeOutMillis, content);
+			return new RestRequest<T>(url, method, contentType, acceptMediaType, userHeaders, timeOutMillis, content);
 		}
 
 	}
@@ -159,6 +177,10 @@ public class RestRequest<REQ> implements JsonSerializable {
 
 	public Map<String, List<String>> getUserHeaders() {
 		return userHeaders;
+	}
+
+	public MediaType getAcceptMediaType() {
+		return acceptMediaType;
 	}
 
 	@Override

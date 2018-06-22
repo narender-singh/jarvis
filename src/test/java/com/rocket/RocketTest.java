@@ -3,6 +3,7 @@ package com.rocket;
 import java.util.AbstractMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -14,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.codehaus.jackson.JsonNode;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,6 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.rocket.core.Rocket;
+import com.rocket.core.http.ResponseDetail;
+import com.rocket.core.http.RestClient;
+import com.rocket.core.http.RestRequest;
 
 public class RocketTest {
 
@@ -31,10 +35,12 @@ public class RocketTest {
 	public void rocketbuildTest() throws Exception {
 		Rocket r = Rocket.build().withClasses(Beans.class, Routes.class).initialize().start();
 		String portNo = r.getProperty("http.portNo");
-		HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-		HttpRequest request = requestFactory.buildGetRequest(new GenericUrl("http://localhost:" + portNo + "/test"));
-		JsonNode response = OM.readTree(request.execute().parseAsString());
-		Assert.assertEquals("value", response.get("key").asText());
+		ResponseDetail<JsonNode> resp = RestClient.get(RestRequest.newBuilder().withContentType(com.rocket.core.http.MediaType.APPLICATION_JSON).buildGet(new GenericUrl("http://localhost:" + portNo + "/test")), JsonNode.class);
+		Assert.assertEquals("value", resp.getContent().get("key").asText());
+//		HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+//		HttpRequest request = requestFactory.buildGetRequest(new GenericUrl("http://localhost:" + portNo + "/test"));
+//		JsonNode response = OM.readTree(request.execute().parseAsString());
+//		Assert.assertEquals("value", response.get("key").asText());
 		r.close();
 	}
 

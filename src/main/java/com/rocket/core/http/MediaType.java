@@ -22,6 +22,18 @@ public enum MediaType {
 		return mimeType;
 	}
 
+	public static MediaType parse(String mime) {
+		for (MediaType type : MediaType.values()) {
+			if (type.getMimeType().equals(mime))
+				return type;
+		}
+		return MediaType.WILDCARD;
+	}
+
+	public static MediaType parse(String type, String subType) {
+		return parse(type + "/" + subType);
+	}
+
 	@Override
 	public String toString() {
 		return mimeType;
