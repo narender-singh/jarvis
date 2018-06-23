@@ -140,6 +140,10 @@ public class RestRequest<REQ> implements JsonSerializable {
 		public RestRequest<REQ> buildGet(final GenericUrl url) {
 			return buildMethod(HttpMethod.GET, url, null);
 		}
+		
+		public RestRequest<REQ> buildHead(final GenericUrl url) {
+			return buildMethod(HttpMethod.HEAD, url, null);
+		}
 
 		public <T> RestRequest<T> buildPost(final GenericUrl url, final T content) {
 			return buildMethod(HttpMethod.POST, url, content);
