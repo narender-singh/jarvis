@@ -71,8 +71,8 @@ public final class RestClient {
 	public static HttpResponse get(final String url, final MediaType contentType)
 			throws URISyntaxException, IOException {
 		return (HttpResponse) get(
-				RestRequest.newBuilder().withContentType(contentType).buildGet(new GenericUrl(new URI(url))), null)
-						.getContent();
+				RestRequest.newBuilder().withContentType(contentType).buildGet(new GenericUrl(new URI(url))),
+				HttpResponse.class).getContent();
 	}
 
 	public static <RESP> ResponseDetail<RESP> get(final String url, final Class<RESP> returnType)
@@ -92,6 +92,103 @@ public final class RestClient {
 	}
 
 	public static <REQ, RESP> ResponseDetail<RESP> get(RestRequest<REQ> req, Class<RESP> returnType)
+			throws IOException {
+		return doHttpRequest(req, new ResponseDetail<RESP>(returnType));
+	}
+
+	public static <REQ> HttpResponse post(final String url, final REQ content) throws URISyntaxException, IOException {
+		return post(url, DEFAULT_MEDIATYPE, content);
+	}
+
+	public static <REQ> HttpResponse post(final String url, final MediaType contentType, final REQ content)
+			throws URISyntaxException, IOException {
+		return (HttpResponse) post(
+				RestRequest.newBuilder().withContentType(contentType).buildPost(new GenericUrl(new URI(url)), content),
+				HttpResponse.class).getContent();
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> post(final String url, final REQ content,
+			final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return post(url, content, DEFAULT_MEDIATYPE, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> post(final String url, final REQ content,
+			final MediaType contentType, final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return post(url, content, contentType, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> post(final String url, final REQ content,
+			final MediaType contentType, final int timeOutMillis, final Class<RESP> returnType)
+			throws URISyntaxException, IOException {
+		return post(RestRequest.newBuilder().withContentType(contentType).withTimeOutMillis(timeOutMillis)
+				.buildPost(new GenericUrl(new URI(url)), content), returnType);
+	}
+
+	public static <REQ, RESP> ResponseDetail<RESP> post(RestRequest<REQ> req, Class<RESP> returnType)
+			throws IOException {
+		return doHttpRequest(req, new ResponseDetail<RESP>(returnType));
+	}
+
+	public static <REQ> HttpResponse put(final String url, final REQ content) throws URISyntaxException, IOException {
+		return put(url, DEFAULT_MEDIATYPE, content);
+	}
+
+	public static <REQ> HttpResponse put(final String url, final MediaType contentType, final REQ content)
+			throws URISyntaxException, IOException {
+		return (HttpResponse) put(
+				RestRequest.newBuilder().withContentType(contentType).buildPut(new GenericUrl(new URI(url)), content),
+				HttpResponse.class).getContent();
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> put(final String url, final REQ content,
+			final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return put(url, content, DEFAULT_MEDIATYPE, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> put(final String url, final REQ content, final MediaType contentType,
+			final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return put(url, content, contentType, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP, REQ> ResponseDetail<RESP> put(final String url, final REQ content, final MediaType contentType,
+			final int timeOutMillis, final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return put(RestRequest.newBuilder().withContentType(contentType).withTimeOutMillis(timeOutMillis)
+				.buildPut(new GenericUrl(new URI(url)), content), returnType);
+	}
+
+	public static <REQ, RESP> ResponseDetail<RESP> put(RestRequest<REQ> req, Class<RESP> returnType)
+			throws IOException {
+		return doHttpRequest(req, new ResponseDetail<RESP>(returnType));
+	}
+
+	public static HttpResponse delete(final String url) throws URISyntaxException, IOException {
+		return delete(url, DEFAULT_MEDIATYPE);
+	}
+
+	public static HttpResponse delete(final String url, final MediaType contentType)
+			throws URISyntaxException, IOException {
+		return (HttpResponse) delete(
+				RestRequest.newBuilder().withContentType(contentType).buildDelete(new GenericUrl(new URI(url))),
+				HttpResponse.class).getContent();
+	}
+
+	public static <RESP> ResponseDetail<RESP> delete(final String url, final Class<RESP> returnType)
+			throws URISyntaxException, IOException {
+		return delete(url, DEFAULT_MEDIATYPE, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP> ResponseDetail<RESP> delete(final String url, final MediaType contentType,
+			final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return delete(url, contentType, DEFAULT_TIMEOUT_MILLIS, returnType);
+	}
+
+	public static <RESP> ResponseDetail<RESP> delete(final String url, final MediaType contentType,
+			final int timeOutMillis, final Class<RESP> returnType) throws URISyntaxException, IOException {
+		return delete(RestRequest.newBuilder().withContentType(contentType).withTimeOutMillis(timeOutMillis)
+				.buildDelete(new GenericUrl(new URI(url))), returnType);
+	}
+
+	public static <REQ, RESP> ResponseDetail<RESP> delete(RestRequest<REQ> req, Class<RESP> returnType)
 			throws IOException {
 		return doHttpRequest(req, new ResponseDetail<RESP>(returnType));
 	}
