@@ -1,25 +1,16 @@
 language: java
-
 jdk:
-  - oraclejdk8
-
-#before_install:
-#  - sudo apt-get install jq
-#  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
-
+- oraclejdk8
 script: mvn -B -Dgpg.skip=true install
-
 install: mvn -B -DskipTests=true -Dgpg.skip=true clean install
 
-#after_success:
-#  - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
+before_install:
+  - sudo apt-get install jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
-#addons:
-#  coverity_scan:
-#    project:
-#      name: "narender-singh/rocket"
-#      description: "Build submitted via Travis CI"
-#    notification_email: na.singh@aol.com
-#    build_command_prepend: "mvn clean"
-#    build_command:   "mvn -DskipTests=true compile"
-#    branch_pattern: master
+after_success:
+  - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r ./target/site/jacoco/jacoco.xml
+
+env:
+  global:
+    secure: TIyv0KsH5bIur95HTTvCuooKo1jYQec1qIuTiD9XqBCNNl69IxuJRqo6SQ5le22bIrB16ckFBbRgGes+Wmgig7rdmqjKpHRPD0WrOwLg97eGies9nwuYFZTMe8ArwAAzC9/8YRJeyXLjOFgsAkJlfx8C/T09hlndhc5zomDUp4VuwZaa4RJsYAyjwgr0GsDmy53cFJOOIHcHQ6+Kr1ODhjnNC1CxwJgzKT3cGlU1Cp7UaEF9ythBIyBy+v5pmvZ0/VSpM/R0CfjKXW2UHIQ/Ji6puru1xtGYobBskSLmwEynzw+3ts9vDJRBPLAbpWEtMBszF71cuqpMDfuQm74BWYUu0Od+28MPJwCDaeHmYdfI7QURpN0x6AATJO0vyjtEA9CkyOL9t7EvrLrwQGcpjgg4OGsgpXLpPuqzifgawmuI5cuVuFktng3czhMFvBlFQmwjhtbswCAZoVagI7NnFQVj1OKJ6Fg396hT0dnjJRivrKnxs5dQq6K1Wc7bEwmkp0qGXucch6rEU7Q1JbIxiQ3zHIYGsjQAjsHtDxfWXh7gg/7XdSeQTEAToazcio6tMKxCwrU90Fe9hmu75uUfXWeo0VqTewtKj4MgxyIejFj+zx89h038QhBtzP3KWFY+hVI7Qi2GVnc4UOwS3T5Nr0WIbk5ij1I2NOTnrjpfU6w=
