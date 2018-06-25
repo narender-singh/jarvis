@@ -293,7 +293,7 @@
 					</execution>
 					<execution>
 						<id>report</id>
-						<phase>post-integration-test</phase>
+						<!-- <phase>post-integration-test</phase> -->
 						<goals>
 							<goal>report</goal>
 						</goals>
@@ -312,23 +312,18 @@
 									</excludes>
 									<limits>
 										<limit implementation="org.jacoco.report.check.Limit">
-											<counter>INSTRUCTION</counter>
+											<counter>COMPLEXITY</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
-											<!--<minimum>0.4</minimum> -->
+											<minimum>0.35</minimum>
+											<!-- <minimum>0.60</minimum> -->
 										</limit>
-										<limit implementation="org.jacoco.report.check.Limit">
-											<counter>CLASS</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
-											<!--<minimum>0.5</minimum> -->
-										</limit>
-										<limit implementation="org.jacoco.report.check.Limit">
-											<counter>METHOD</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
-											<!--<minimum>0.4</minimum> -->
-										</limit>
+										<!-- <limit implementation="org.jacoco.report.check.Limit"> <counter>INSTRUCTION</counter> 
+											<value>COVEREDRATIO</value> <minimum>0.0</minimum> <minimum>0.4</minimum> 
+											</limit> <limit implementation="org.jacoco.report.check.Limit"> <counter>CLASS</counter> 
+											<value>COVEREDRATIO</value> <minimum>0.0</minimum> <minimum>0.5</minimum> 
+											</limit> <limit implementation="org.jacoco.report.check.Limit"> <counter>METHOD</counter> 
+											<value>COVEREDRATIO</value> <minimum>0.0</minimum> <minimum>0.4</minimum> 
+											</limit> -->
 									</limits>
 								</rule>
 							</rules>
