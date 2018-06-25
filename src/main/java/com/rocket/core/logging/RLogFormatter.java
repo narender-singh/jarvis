@@ -19,15 +19,17 @@ import ch.qos.logback.core.LayoutBase;
 
 public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 
-	private static final DateTimeFormatter D_F = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Asia/Kolkata"));
-	
-	//private static final DateTimeFormatter D_F = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
+	// private static final DateTimeFormatter D_F =
+	// DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Asia/Kolkata"));
 
-	/*private static final ObjectWriter JSON_WRITER;
+	private static final DateTimeFormatter D_F = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ")
+			.withZone(ZoneId.of("Asia/Kolkata"));;
 
-	static {
-		JSON_WRITER = (new ObjectMapper()).writer();
-	}*/
+	/*
+	 * private static final ObjectWriter JSON_WRITER;
+	 * 
+	 * static { JSON_WRITER = (new ObjectMapper()).writer(); }
+	 */
 
 	public static final ThreadLocal<StringBuilder> S_B = new ThreadLocal<StringBuilder>() {
 		@Override
@@ -56,7 +58,7 @@ public class RLogFormatter extends LayoutBase<ILoggingEvent> {
 			result.append("\", \"tid\": \"");
 			result.append(event.getThreadName());
 			result.append("\", \"level\": ");
-			result.append(event.getLevel());			
+			result.append(event.getLevel());
 			try {
 				result.append("\", \"class\": ");
 				RocketUtils.writeAbreviatedClassName(event.getLoggerName(), result);
