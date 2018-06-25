@@ -55,7 +55,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 	public RestRequest(final GenericUrl url, final HttpMethod method, final MediaType contentType,
 			final MediaType acceptMediaType, final Map<String, List<String>> headers, final int timeoutMillis,
 			final REQ requestObject) {
-		if (!(method.equals(HttpMethod.POST) || method.equals(HttpMethod.PUT)) && requestObject != null)
+		if ((method.equals(HttpMethod.GET) || method.equals(HttpMethod.HEAD)) && requestObject != null)
 			throw new IllegalArgumentException("Cannot have request content for method" + method);
 		if (url == null)
 			throw new IllegalArgumentException("Url is a mandatory parameter");
@@ -129,8 +129,8 @@ public class RestRequest<REQ> implements JsonSerializable {
 		// timeOutMillis, requestObject);
 		// }
 
-		public RestRequest<REQ> buildOptions(final GenericUrl url) {
-			return buildMethod(HttpMethod.OPTIONS, url, null);
+		public <T> RestRequest<T> buildOptions(final GenericUrl url, final T content) {
+			return buildMethod(HttpMethod.OPTIONS, url, content);
 		}
 
 		public <T> RestRequest<T> buildPut(final GenericUrl url, final T content) {
@@ -140,7 +140,7 @@ public class RestRequest<REQ> implements JsonSerializable {
 		public RestRequest<REQ> buildGet(final GenericUrl url) {
 			return buildMethod(HttpMethod.GET, url, null);
 		}
-		
+
 		public RestRequest<REQ> buildHead(final GenericUrl url) {
 			return buildMethod(HttpMethod.HEAD, url, null);
 		}
@@ -149,8 +149,8 @@ public class RestRequest<REQ> implements JsonSerializable {
 			return buildMethod(HttpMethod.POST, url, content);
 		}
 
-		public RestRequest<REQ> buildDelete(final GenericUrl url) {
-			return buildMethod(HttpMethod.DELETE, url, null);
+		public <T> RestRequest<T> buildDelete(final GenericUrl url, final T content) {
+			return buildMethod(HttpMethod.DELETE, url, content);
 		}
 
 		public <T> RestRequest<T> buildMethod(final HttpMethod method, final GenericUrl url, final T content) {
