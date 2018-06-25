@@ -97,8 +97,7 @@ public final class Rocket implements AutoCloseable {
 				rocket.properties.load(resourceStream);
 			} catch (IOException e) {
 				RocketLogger.LAZY.warn("default.properties file not found");
-			}
-			RocketLogger.LAZY.info("Current os on which rocket is running {} ", Habitat.getCurrentOS());
+			}			
 			if (!Habitat.getCurrentOS().equals(SupportedOS.UNKNOWN) && Habitat.getCurrentOS().isSupported()) {
 				rocket.properties.setProperty(ROCKET_LOG_DIR_PROPERTY,
 						rocket.properties.getProperty(Habitat.getCurrentOS().getlogFileProperty()));
@@ -185,6 +184,7 @@ public final class Rocket implements AutoCloseable {
 			originalSystemProperties = updateAndMergeSystemProperties(properties);
 			RocketLogger.LAZY.info("Orignal system properties are : " + originalSystemProperties);
 			RocketLogger.LAZY.info("rocket properties are : " + properties);
+			RocketLogger.LAZY.info("Current os on which rocket is running {} ", Habitat.getCurrentOS());
 			AsyncPostConstructBeanPostProcessor post = new AsyncPostConstructBeanPostProcessor();
 			RocketSpringContext context = new RocketSpringContext(propSource, post);
 			this.context = context;
