@@ -21,6 +21,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.rocket.core.camel.cxf.jaxrs.providers.RocketExceptionMapper;
 
@@ -50,6 +51,7 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 		ServerProviderFactory sf = ServerProviderFactory.createInstance(bus);
 		final ArrayList<Object> rocketProviders = new ArrayList<>();
 		rocketProviders.add(new JacksonJsonProvider());
+		rocketProviders.add(new JacksonJaxbJsonProvider());
 		rocketProviders.add(new RocketExceptionMapper());
 		rocketProviders.add(new StringTextProvider());
 		rocketProviders.add(new PrimitiveTextProvider<Object>());
