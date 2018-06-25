@@ -31,6 +31,7 @@ public final class Rocket implements AutoCloseable {
 
 	public static final String ROCKET_APPNAME = "rocket.applicationName";
 	public static final String ROCKET_PORT = "http.portNo";
+	public static final String ROCKET_LOG_DIR_PROPERTY = "rocket.logdir";
 
 	/**
 	 * Private constructor singleton class
@@ -97,6 +98,14 @@ public final class Rocket implements AutoCloseable {
 			} catch (IOException e) {
 				RocketLogger.LAZY.warn("default.properties file not found");
 			}
+			RocketLogger.LAZY.info("Current os on which rocket is running {} ", Habitat.getCurrentOS());
+			if (!Habitat.getCurrentOS().equals(SupportedOS.UNKNOWN) && Habitat.getCurrentOS().isSupported()) {
+				rocket.properties.setProperty(ROCKET_LOG_DIR_PROPERTY,
+						rocket.properties.getProperty(Habitat.getCurrentOS().getlogFileProperty()));
+			} else {
+				rocket.properties.setProperty(ROCKET_LOG_DIR_PROPERTY, System.getProperty("user.dir"));
+			}
+
 		}
 
 		private static Rocket getRocket() {
