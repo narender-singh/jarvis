@@ -15,6 +15,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.rocket.core.configuration.CamelConfiguration;
 import com.rocket.core.configuration.CoreSpringConfiguration;
+import com.rocket.core.utils.RocketUtils;
 
 public final class Rocket implements AutoCloseable {
 
@@ -28,15 +29,20 @@ public final class Rocket implements AutoCloseable {
 	private volatile RocketSpringContext context;
 	private RocketPropertySource propSource;
 	private Properties originalSystemProperties;
-
+	private static final RocketUncaughtExceptionHandlerImpl UEH = new RocketUncaughtExceptionHandlerImpl(true);
 	public static final String ROCKET_APPNAME = "rocket.applicationName";
 	public static final String ROCKET_PORT = "http.portNo";
 	public static final String ROCKET_LOG_DIR_PROPERTY = "rocket.logdir";
+
+	static {
+		Thread.setDefaultUncaughtExceptionHandler(UEH);
+	}
 
 	/**
 	 * Private constructor singleton class
 	 */
 	private Rocket() {
+		Thread.currentThread().setUncaughtExceptionHandler(UEH);
 	}
 
 	public Rocket withEnv(Env env) {
@@ -97,14 +103,13 @@ public final class Rocket implements AutoCloseable {
 				rocket.properties.load(resourceStream);
 			} catch (IOException e) {
 				RocketLogger.LAZY.warn("default.properties file not found");
-			}			
+			}
 			if (!Habitat.getCurrentOS().equals(SupportedOS.UNKNOWN) && Habitat.getCurrentOS().isSupported()) {
 				rocket.properties.setProperty(ROCKET_LOG_DIR_PROPERTY,
 						rocket.properties.getProperty(Habitat.getCurrentOS().getlogFileProperty()));
 			} else {
 				rocket.properties.setProperty(ROCKET_LOG_DIR_PROPERTY, System.getProperty("user.dir"));
 			}
-
 		}
 
 		private static Rocket getRocket() {
@@ -238,6 +243,31 @@ public final class Rocket implements AutoCloseable {
 			System.getProperties().clear();
 			System.getProperties().putAll(originalSystemProperties);
 			setExistFlag();
+		}
+
+	}
+
+	public static class RocketUncaughtExceptionHandlerImpl implements Thread.UncaughtExceptionHandler {
+
+		private boolean shutdownOnError;
+
+		public RocketUncaughtExceptionHandlerImpl(boolean shutdownOnError) {
+			this.shutdownOnError = shutdownOnError;
+		}
+
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			try {
+				if (RocketUtils.isNonRecoverableError(e)) {
+					RocketLogger.LAZY.error("Shutting down", e);
+					Rocket.configure().setExistFlag();
+				}
+			} finally {
+				if (shutdownOnError) {
+					RocketLogger.LAZY.error("Shutting down", e);
+					Rocket.configure().setExistFlag();
+				}
+			}
 		}
 
 	}

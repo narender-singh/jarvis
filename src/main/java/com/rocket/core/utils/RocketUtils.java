@@ -12,11 +12,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public final class RocketUtils {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RocketUtils.class);
 
 	private RocketUtils() {
 	}
@@ -35,6 +39,15 @@ public final class RocketUtils {
 				app.append(className.charAt(++i)).append('.');
 		}
 		app.append(className, lx + 1, className.length());
+	}
+
+	public static boolean isNonRecoverableError(Throwable e) {
+		LOG.error("Error occured in service", e);
+		if (e instanceof Error)
+			return true;
+		else if (e instanceof RuntimeException)
+			return false;
+		return true;
 	}
 
 	public static <T> T readPojoFromXml(String xml, Class<T> type)
