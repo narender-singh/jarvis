@@ -1,5 +1,5 @@
 # rocket
-Java web service framework
+A basic Java web service framework build on top of spring,apache camel & apache CXF.
 
 Available on [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.narender-singh/rocket/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.narender-singh/rocket/)
 
