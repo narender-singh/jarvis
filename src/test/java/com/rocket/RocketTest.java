@@ -5,9 +5,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.javanet.NetHttpTransport;
+//import com.google.api.client.http.HttpRequest;
+//import com.google.api.client.http.HttpRequestFactory;
+//import com.google.api.client.http.javanet.NetHttpTransport;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.camel.builder.RouteBuilder;
 
-import org.codehaus.jackson.map.ObjectMapper;
+//import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
@@ -29,18 +29,22 @@ import com.rocket.core.http.RestRequest;
 
 public class RocketTest {
 
-	private static final ObjectMapper OM = new ObjectMapper();
+	// private static final ObjectMapper OM = new ObjectMapper();
 
 	@Test
 	public void rocketbuildTest() throws Exception {
 		Rocket r = Rocket.build().withClasses(Beans.class, Routes.class).initialize().start();
 		String portNo = r.getProperty("http.portNo");
-		ResponseDetail<JsonNode> resp = RestClient.get(RestRequest.newBuilder().withContentType(com.rocket.core.http.MediaType.APPLICATION_JSON).buildGet(new GenericUrl("http://localhost:" + portNo + "/test")), JsonNode.class);
+		ResponseDetail<JsonNode> resp = RestClient
+				.get(RestRequest.newBuilder().withContentType(com.rocket.core.http.MediaType.APPLICATION_JSON)
+						.buildGet(new GenericUrl("http://localhost:" + portNo + "/test")), JsonNode.class);
 		Assert.assertEquals("value", resp.getContent().get("key").asText());
-//		HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
-//		HttpRequest request = requestFactory.buildGetRequest(new GenericUrl("http://localhost:" + portNo + "/test"));
-//		JsonNode response = OM.readTree(request.execute().parseAsString());
-//		Assert.assertEquals("value", response.get("key").asText());
+		// HttpRequestFactory requestFactory = new
+		// NetHttpTransport().createRequestFactory();
+		// HttpRequest request = requestFactory.buildGetRequest(new
+		// GenericUrl("http://localhost:" + portNo + "/test"));
+		// JsonNode response = OM.readTree(request.execute().parseAsString());
+		// Assert.assertEquals("value", response.get("key").asText());
 		r.close();
 	}
 
