@@ -50,6 +50,12 @@ public final class Rocket implements AutoCloseable {
 		return this;
 	}
 
+	public boolean isRunning() {
+		if (context != null)
+			context.isRunning();
+		return false;
+	}
+
 	public Properties getProperties() {
 		return properties;
 	}

@@ -49,37 +49,37 @@ public class RocketSpringContext extends AnnotationConfigApplicationContext {
 		ConfigurableListableBeanFactory beanFactory = this.getBeanFactory();
 		beanFactory.addBeanPostProcessor(postProcessor);
 		String[] beanDefinitionNames = beanFactory.getBeanDefinitionNames();
-	    PriorityQueue<StringIntPair> ordered = new PriorityQueue<>(4, StringIntPair.NR_COMPARATOR);
-	    String annName = InstantiateFirst.class.getName();
-	    for (String name : beanDefinitionNames) {
-	      BeanDefinition beanDefinition = beanFactory.getBeanDefinition(name);
-	      if (beanDefinition instanceof AnnotatedBeanDefinition) {
-	        AnnotatedBeanDefinition abd = (AnnotatedBeanDefinition) beanDefinition;
-	        MethodMetadata factoryMethodMetadata = abd.getFactoryMethodMetadata();
-	        if (factoryMethodMetadata != null) {
-	          Map<String, Object> annotationAttributes = factoryMethodMetadata.getAnnotationAttributes(annName);
-	          if (annotationAttributes != null) {
-	            Integer priority = (Integer) annotationAttributes.get("priority");
-	            ordered.add(new StringIntPair(priority, name));
-	          } else {
-	            InstantiateFirst annotation = beanFactory.findAnnotationOnBean(name, InstantiateFirst.class);
-	            if (annotation != null) {
-	              ordered.add(new StringIntPair(annotation.priority(), name));
-	            }
+		PriorityQueue<StringIntPair> ordered = new PriorityQueue<>(4, StringIntPair.NR_COMPARATOR);
+		String annName = InstantiateFirst.class.getName();
+		for (String name : beanDefinitionNames) {
+			BeanDefinition beanDefinition = beanFactory.getBeanDefinition(name);
+			if (beanDefinition instanceof AnnotatedBeanDefinition) {
+				AnnotatedBeanDefinition abd = (AnnotatedBeanDefinition) beanDefinition;
+				MethodMetadata factoryMethodMetadata = abd.getFactoryMethodMetadata();
+				if (factoryMethodMetadata != null) {
+					Map<String, Object> annotationAttributes = factoryMethodMetadata.getAnnotationAttributes(annName);
+					if (annotationAttributes != null) {
+						Integer priority = (Integer) annotationAttributes.get("priority");
+						ordered.add(new StringIntPair(priority, name));
+					} else {
+						InstantiateFirst annotation = beanFactory.findAnnotationOnBean(name, InstantiateFirst.class);
+						if (annotation != null) {
+							ordered.add(new StringIntPair(annotation.priority(), name));
+						}
 
-	          }
-	        } else {
-	          InstantiateFirst annotation = beanFactory.findAnnotationOnBean(name, InstantiateFirst.class);
-	          if (annotation != null) {
-	            ordered.add(new StringIntPair(annotation.priority(), name));
-	          }
-	        }
-	      }
+					}
+				} else {
+					InstantiateFirst annotation = beanFactory.findAnnotationOnBean(name, InstantiateFirst.class);
+					if (annotation != null) {
+						ordered.add(new StringIntPair(annotation.priority(), name));
+					}
+				}
+			}
 
-	    }
-	    for (StringIntPair name : ordered) {
-	      this.getBean(name.getString());
-	    }
+		}
+		for (StringIntPair name : ordered) {
+			this.getBean(name.getString());
+		}
 		super.onRefresh();
 	}
 
