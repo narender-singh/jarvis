@@ -71,62 +71,68 @@ public class RocketLauncher {
 			TEST_DATA.put("delete", "DELETE");
 			TEST_DATA.put("options", "OPTIONS");
 			TEST_DATA.put("head", "HEAD");
+			TEST_DATA.put("key", "value");
+		}
+
+		@Path("/")
+		@GET
+		@Produces({ MediaType.APPLICATION_JSON })
+		public Map.Entry<String, String> getDummy() {
+			return TEST_DATA.entrySet().stream().filter(x -> x.getKey().equals("key")).findFirst().get();
 		}
 
 		@Path("/get")
 		@GET
 		@Produces({ MediaType.APPLICATION_JSON })
-		public Map.Entry<String, String> get() {
-			return new AbstractMap.SimpleEntry<String, String>("key", "value");
+		public Map<String, String> get() {
+			return TEST_DATA;
 		}
-		
+
 		@Path("/put")
 		@PUT
-		@Produces( {MediaType.TEXT_PLAIN})
-		@Consumes( {MediaType.APPLICATION_JSON})
-		public String put(Map.Entry<String, String> s){
-			if(TEST_DATA.containsKey(s.getKey()))
-				{
-					TEST_DATA.put(s.getKey(),s.getValue());
-					return "Updated successfully";
-				}
-			TEST_DATA.put(s.getKey(),s.getValue());
-			return "Added successfully";
+		@Produces({ MediaType.TEXT_PLAIN })
+		@Consumes({ MediaType.APPLICATION_JSON })
+		public String put(Map.Entry<String, String> s) {
+			if (TEST_DATA.containsKey(s.getKey())) {
+				TEST_DATA.put(s.getKey(), s.getValue());
+				return s.getValue();
+			}
+			TEST_DATA.put(s.getKey(), s.getValue());
+			return s.getValue();
 		}
-		
+
 		@Path("/")
 		@POST
-		@Produces( {MediaType.TEXT_PLAIN})
-		@Consumes( {MediaType.APPLICATION_JSON})
-		public String post(Map.Entry<String, String> s){
-			TEST_DATA.put(s.getKey(),s.getValue());
-			return "Added successfully";
+		@Produces({ MediaType.TEXT_PLAIN })
+		@Consumes({ MediaType.APPLICATION_JSON })
+		public String post(Map.Entry<String, String> s) {
+			TEST_DATA.put(s.getKey(), s.getValue());
+			return s.getValue();
 		}
-		
+
 		@Path("/")
 		@DELETE
-		@Produces( {MediaType.TEXT_PLAIN})
-		@Consumes( {MediaType.TEXT_PLAIN})
-		public String delete(String s){
-			TEST_DATA.remove(s);
-			return "Added successfully";
+		@Produces({ MediaType.TEXT_PLAIN })
+		@Consumes({ MediaType.TEXT_PLAIN })
+		public String delete(String s) {
+			return TEST_DATA.remove(s);
 		}
-		
-//		@Path("/head")
-//		@POST
-//		@Produces( {MediaType.APPLICATION_JSON})
-//		@Consumes( {MediaType.APPLICATION_JSON})
-//		public String head(){
-//			
-//		}
-//		
-//		@Path("/options")
-//		@POST
-//		@Produces( {MediaType.APPLICATION_JSON})
-//		@Consumes( {MediaType.APPLICATION_JSON})
-//		public String options(){
-//						
-//		}
+
+		// @Path("/head")
+		// @POST
+		// @Produces( {MediaType.APPLICATION_JSON})
+		// @Consumes( {MediaType.APPLICATION_JSON})
+		// public String head(){
+		//
+		// }
+		//
+		// @Path("/options")
+		// @POST
+		// @Produces( {MediaType.APPLICATION_JSON})
+		// @Consumes( {MediaType.APPLICATION_JSON})
+		// public String options(){
+		//
+		// }
 
 	}
 }
