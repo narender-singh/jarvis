@@ -56,7 +56,7 @@ public class RocketTest {
 		String portNo = RocketLauncher.getRocket().getProperty("http.portNo");
 		ResponseDetail<JsonNode> resp = RestClient
 				.get(RestRequest.newBuilder().withContentType(com.rocket.core.http.MediaType.APPLICATION_JSON)
-						.buildGet(new GenericUrl("http://localhost:" + portNo + "/test")), JsonNode.class);
+						.buildGet(new GenericUrl("http://localhost:" + portNo + "/test/get")), JsonNode.class);
 		Assert.assertEquals("value", resp.getContent().get("key").asText());
 	}
 
