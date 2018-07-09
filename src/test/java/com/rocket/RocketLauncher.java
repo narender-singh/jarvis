@@ -15,9 +15,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.camel.Consume;
 import org.apache.camel.builder.RouteBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.rocket.core.Rocket;
 
 public class RocketLauncher {
@@ -26,6 +29,10 @@ public class RocketLauncher {
 
 	static {
 
+	}
+	
+	public static void main(String[] args){
+		Launch();
 	}
 
 	public static void Launch() {
@@ -61,6 +68,8 @@ public class RocketLauncher {
 
 	@Path("/")
 	public static class WS {
+		
+		private static final Logger l = LoggerFactory.getLogger(WS.class);
 
 		private static final Map<String, String> TEST_DATA = new HashMap<>();
 
@@ -92,20 +101,21 @@ public class RocketLauncher {
 		@PUT
 		@Produces({ MediaType.TEXT_PLAIN })
 		@Consumes({ MediaType.APPLICATION_JSON })
-		public String put(Map.Entry<String, String> s) {
-			if (TEST_DATA.containsKey(s.getKey())) {
-				TEST_DATA.put(s.getKey(), s.getValue());
-				return s.getValue();
+		public String put(JsonNode s) {
+			l.info("got request content : " + s);
+			if (TEST_DATA.containsKey(s.get("put").asText())) {
+				TEST_DATA.put("put", s.get("put").asText());
+				return s.get("put").asText();
 			}
-			TEST_DATA.put(s.getKey(), s.getValue());
-			return s.getValue();
+			TEST_DATA.put("put", s.get("put").asText());
+			return s.get("put").asText();
 		}
 
 		@Path("/")
 		@POST
 		@Produces({ MediaType.TEXT_PLAIN })
 		@Consumes({ MediaType.APPLICATION_JSON })
-		public String post(Map.Entry<String, String> s) {
+		public String post(AbstractMap.SimpleEntry<String, String> s) {
 			TEST_DATA.put(s.getKey(), s.getValue());
 			return s.getValue();
 		}

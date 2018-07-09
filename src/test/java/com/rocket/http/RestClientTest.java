@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.rocket.RocketLauncher;
@@ -18,15 +19,18 @@ import com.rocket.core.http.RestClient;
 
 public class RestClientTest {
 
+	// private static final Logger l =
+	// LoggerFactory.getLogger(RestClientTest.class);
+
 	private String url;
 
-	@Before
+	//@Before
 	public void before() {
 		RocketLauncher.Launch();
 		url = "http://localhost:" + RocketLauncher.getRocket().getProperty("http.portNo") + "/test";
 	}
 
-	@Test
+	//@Test
 	public void get() throws URISyntaxException, IOException {
 		ResponseDetail<JsonNode> result = RestClient.get(url + "/get", MediaType.APPLICATION_JSON, JsonNode.class);
 		Assert.assertEquals("GET", result.getContent().get("get").asText());
@@ -36,11 +40,13 @@ public class RestClientTest {
 	public void put() throws URISyntaxException, IOException {
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		node.put("put", "PUT_VALUE_UPDATED");
-		ResponseDetail<String> data = RestClient.put(url, node, MediaType.APPLICATION_JSON, String.class);
+		String s = new ObjectMapper().writeValueAsString(node);
+		// l.info("request content : {} ", s);
+		ResponseDetail<String> data = RestClient.put(url + "/put", node, MediaType.APPLICATION_JSON, String.class);
 		Assert.assertEquals("PUT_VALUE_UPDATED", data.getContent());
 	}
 
-	//@Test
+	// @Test
 	public void post() throws URISyntaxException, IOException {
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		node.put("patch", "PATCH_ADDED");
@@ -53,7 +59,7 @@ public class RestClientTest {
 	// RestClient.get(url, MediaType.APPLICATION_JSON, JsonNode.class);
 	// }
 
-	@After
+	//@After
 	public void after() throws Exception {
 		RocketLauncher.stop();
 	}

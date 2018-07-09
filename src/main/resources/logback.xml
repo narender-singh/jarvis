@@ -29,6 +29,10 @@
 		<appender-ref ref="async" />
 	</logger>
 
+	<logger name="org.apache.cxf" additivity="false" level="INFO">
+		<appender-ref ref="async" />
+	</logger>
+
 	<logger name="com.rocket" additivity="false" level="INFO">
 		<appender-ref ref="async" />
 	</logger>
