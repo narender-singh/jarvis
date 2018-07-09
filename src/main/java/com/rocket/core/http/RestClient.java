@@ -59,7 +59,7 @@ public final class RestClient {
 			});
 
 	private static final MediaType DEFAULT_MEDIATYPE = MediaType.APPLICATION_JSON;
-	private static final int DEFAULT_TIMEOUT_MILLIS = 60000;
+	private static final int DEFAULT_TIMEOUT_MILLIS = 120000;
 
 	private RestClient() {
 	}

@@ -115,9 +115,9 @@ public class RocketLauncher {
 		@POST
 		@Produces({ MediaType.TEXT_PLAIN })
 		@Consumes({ MediaType.APPLICATION_JSON })
-		public String post(AbstractMap.SimpleEntry<String, String> s) {
-			TEST_DATA.put(s.getKey(), s.getValue());
-			return s.getValue();
+		public String post(JsonNode s) {
+			TEST_DATA.put("patch", s.get("patch").asText());
+			return s.get("patch").asText();
 		}
 
 		@Path("/")
