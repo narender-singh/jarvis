@@ -12,39 +12,41 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.rocket.RocketLauncher;
+import com.rocket.RocketTest;
 import com.rocket.core.http.MediaType;
 import com.rocket.core.http.ResponseDetail;
 import com.rocket.core.http.RestClient;
 
-public class RestClientTest {
+public class RestClientTest extends RocketTest {
 
 	// private static final Logger l =
 	// LoggerFactory.getLogger(RestClientTest.class);
 
-	private static String url;
+	// private static String url;
 
-	//@BeforeClass
+	// @BeforeClass
 	public static void before() {
 		RocketLauncher.Launch();
-		url = "http://localhost:" + RocketLauncher.getRocket().getProperty("http.portNo") + "/test";
+		// url = "http://localhost:" +
+		// RocketLauncher.getRocket().getProperty("http.portNo") + "/test";
 	}
 
-	//@Test
+	@Test
 	public void get() throws URISyntaxException, IOException {
 		ResponseDetail<JsonNode> result = RestClient.get(url + "/get", MediaType.APPLICATION_JSON, JsonNode.class);
 		Assert.assertEquals("GET", result.getContent().get("get").asText());
 	}
 
-	//@Test
+	@Test
 	public void put() throws URISyntaxException, IOException {
-		Map.Entry<String, String> model =  new AbstractMap.SimpleEntry<>("put", "PUT_VALUE_UPDATED");		
+		Map.Entry<String, String> model = new AbstractMap.SimpleEntry<>("put", "PUT_VALUE_UPDATED");
 		ResponseDetail<String> data = RestClient.put(url + "/put", model, MediaType.APPLICATION_JSON, String.class);
 		Assert.assertEquals("PUT_VALUE_UPDATED", data.getContent());
 	}
 
-	//@Test
+	@Test
 	public void post() throws URISyntaxException, IOException {
-		Map.Entry<String,String> node = new AbstractMap.SimpleEntry<>("patch", "PATCH_ADDED");		
+		Map.Entry<String, String> node = new AbstractMap.SimpleEntry<>("patch", "PATCH_ADDED");
 		ResponseDetail<String> response = RestClient.post(url, node, MediaType.APPLICATION_JSON, String.class);
 		Assert.assertEquals("PATCH_ADDED", response.getContent());
 	}
@@ -54,7 +56,7 @@ public class RestClientTest {
 	// RestClient.get(url, MediaType.APPLICATION_JSON, JsonNode.class);
 	// }
 
-	//@AfterClass
+	@AfterClass
 	public static void after() throws Exception {
 		RocketLauncher.stop();
 	}

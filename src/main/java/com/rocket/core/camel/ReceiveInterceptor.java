@@ -27,6 +27,7 @@ public class ReceiveInterceptor extends AbstractPhaseInterceptor<Message> {
 		if (content != null) {
 			try {
 				logInputStreamContent(content);
+				content.reset();
 				content.close();				
 			} catch (IOException e) {
 				l.error("Error", e);

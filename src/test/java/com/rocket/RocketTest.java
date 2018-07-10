@@ -19,12 +19,14 @@ import com.rocket.core.http.RestRequest;
 
 public class RocketTest {
 
-	private static Rocket rocket;
+	protected static Rocket rocket;
+	protected static String url;
 
 	@BeforeClass
 	public static void before() {
 		RocketLauncher.Launch();
 		rocket = RocketLauncher.getRocket();
+		url = "http://localhost:" + RocketLauncher.getRocket().getProperty("http.portNo") + "/test";
 	}
 
 	@Test
@@ -60,7 +62,7 @@ public class RocketTest {
 		Assert.assertEquals("value", resp.getContent().get("key").asText());
 	}
 
-	@AfterClass
+	//@AfterClass
 	public static void after() throws Exception {
 		RocketLauncher.stop();
 	}

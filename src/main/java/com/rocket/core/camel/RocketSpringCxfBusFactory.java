@@ -8,6 +8,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.ext.logging.LoggingFeature;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorProvider;
 
@@ -42,8 +43,8 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 	public static SpringBus create(final ApplicationContext ctx) {
 		SpringBus bus = new SpringBus();
 		List<Interceptor<? extends Message>> inInterceptors = bus.getInInterceptors();
-		bus.getFeatures().add(new LoggingFeature());
-		inInterceptors.add(new ReceiveInterceptor());
+		//bus.getFeatures().add(new LoggingFeature());
+		inInterceptors.add(new LoggingInInterceptor());
 		inInterceptors.add(new GenericInterceptor());
 		ServiceLoader<InterceptorProvider> load = ServiceLoader.load(InterceptorProvider.class);
 		for (InterceptorProvider provider : load) {
