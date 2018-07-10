@@ -1,6 +1,5 @@
 package com.rocket;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.camel.Consume;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,25 +23,26 @@ import com.rocket.core.Rocket;
 
 public class RocketLauncher {
 
-	private static Rocket rocket;
+	private Rocket rocket;
 
 	static {
 
 	}
 	
 	public static void main(String[] args){
-		Launch();
+		RocketLauncher launcher = new RocketLauncher();
+		launcher.Launch();
 	}
 
-	public static void Launch() {
+	public void Launch() {
 		rocket = Rocket.build().withClasses(Beans.class, Routes.class).initialize().start();
 	}
 
-	public static void stop() throws Exception {
+	public void stop() throws Exception {
 		rocket.close();
 	}
 
-	public static Rocket getRocket() {
+	public Rocket getRocket() {
 		return rocket;
 	}
 
