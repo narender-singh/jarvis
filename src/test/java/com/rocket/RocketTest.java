@@ -29,7 +29,6 @@ public class RocketTest {
 
 	@BeforeClass
 	public static void before() throws InterruptedException {
-		Thread.sleep(20000);
 		launcher = new RocketLauncher();
 		launcher.Launch();
 		rocket = launcher.getRocket();
@@ -59,7 +58,7 @@ public class RocketTest {
 			// rocket.isRunning(), context.toString()));
 		}
 	}
-	
+
 	@Test
 	public void get() throws URISyntaxException, IOException {
 		ResponseDetail<JsonNode> result = RestClient.get(url + "/get", MediaType.APPLICATION_JSON, JsonNode.class);
@@ -79,7 +78,6 @@ public class RocketTest {
 		ResponseDetail<String> response = RestClient.post(url, node, MediaType.APPLICATION_JSON, String.class);
 		Assert.assertEquals("PATCH_ADDED", response.getContent());
 	}
-
 
 	@Test
 	public void rocketbuildTest() throws IOException {
