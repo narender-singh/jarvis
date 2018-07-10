@@ -43,7 +43,8 @@ public final class RocketSpringCxfBusFactory extends SpringBusFactory implements
 		SpringBus bus = new SpringBus();
 		List<Interceptor<? extends Message>> inInterceptors = bus.getInInterceptors();
 		bus.getFeatures().add(new LoggingFeature());
-		inInterceptors.add(new GenericInterceptor());		
+		inInterceptors.add(new ReceiveInterceptor());
+		inInterceptors.add(new GenericInterceptor());
 		ServiceLoader<InterceptorProvider> load = ServiceLoader.load(InterceptorProvider.class);
 		for (InterceptorProvider provider : load) {
 			inInterceptors.addAll(provider.getInInterceptors());

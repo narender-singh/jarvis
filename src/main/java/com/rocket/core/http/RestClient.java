@@ -292,7 +292,7 @@ public final class RestClient {
 			} else if (InputStream.class.equals(contentClass)) {
 				content = new InputStreamContent(request.getContentType().getMimeType(), (InputStream) object);
 			} else {
-				content = new JsonHttpContent(new JacksonFactory(), object);
+				content = new JsonContent(object, request.getContentType());
 			}
 			http = HTTP_REQUEST_FACTORY.buildRequest(request.getMethod().toString(), request.getUrl(), content);
 			break;
@@ -404,7 +404,7 @@ public final class RestClient {
 		private RESP parseStringOrByte(InputStream in, Class<RESP> res, HttpMediaType type) throws IOException {
 			if (byte[].class.equals(res)) {
 				return (RESP) ByteStreams.toByteArray(in);
-			} else if (CharSequence.class.equals(res)) {
+			} else if (CharSequence.class.isAssignableFrom(res)) {
 				return (RESP) new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
 			} else {
 				throw new RuntimeException("Unsupported mediaType : " + type.getType() + "/" + type.getSubType());

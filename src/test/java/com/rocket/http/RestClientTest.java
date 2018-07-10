@@ -4,28 +4,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
-import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.api.client.googleapis.util.Utils;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.rocket.RocketLauncher;
-import com.rocket.TestModel;
 import com.rocket.core.http.MediaType;
 import com.rocket.core.http.ResponseDetail;
 import com.rocket.core.http.RestClient;
@@ -35,10 +21,10 @@ public class RestClientTest {
 	// private static final Logger l =
 	// LoggerFactory.getLogger(RestClientTest.class);
 
-	private String url;
+	private static String url;
 
-	@Before
-	public void before() {
+	//@BeforeClass
+	public static void before() {
 		RocketLauncher.Launch();
 		url = "http://localhost:" + RocketLauncher.getRocket().getProperty("http.portNo") + "/test";
 	}
@@ -49,10 +35,9 @@ public class RestClientTest {
 		Assert.assertEquals("GET", result.getContent().get("get").asText());
 	}
 
-	@Test
+	//@Test
 	public void put() throws URISyntaxException, IOException {
-		TestModel model = new TestModel();
-		model.setKey("PUT_UPDATED");
+		Map.Entry<String, String> model =  new AbstractMap.SimpleEntry<>("put", "PUT_VALUE_UPDATED");		
 		ResponseDetail<String> data = RestClient.put(url + "/put", model, MediaType.APPLICATION_JSON, String.class);
 		Assert.assertEquals("PUT_VALUE_UPDATED", data.getContent());
 	}
@@ -64,25 +49,13 @@ public class RestClientTest {
 		Assert.assertEquals("PATCH_ADDED", response.getContent());
 	}
 
-	//@Test
-	public void puttest() throws Exception{
-		try {
-			HttpRequestFactory factory = new NetHttpTransport().createRequestFactory();
-			HttpRequest req = factory.buildPostRequest(new GenericUrl(url), new JsonHttpContent(Utils.getDefaultJsonFactory(), new AbstractMap.SimpleEntry<>("patch", "PATCH_ADDED")));
-			HttpResponse response =  req.execute();
-			String fResp = response.parseAs(String.class);			
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-		}
-	}
-	
 	// @Test
 	// public void delete() throws URISyntaxException, IOException {
 	// RestClient.get(url, MediaType.APPLICATION_JSON, JsonNode.class);
 	// }
 
-	@After
-	public void after() throws Exception {
+	//@AfterClass
+	public static void after() throws Exception {
 		RocketLauncher.stop();
 	}
 }

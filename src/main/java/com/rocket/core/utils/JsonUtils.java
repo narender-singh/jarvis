@@ -2,7 +2,9 @@ package com.rocket.core.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,6 +18,11 @@ public final class JsonUtils {
 
 	public static final String Serialize(Object obj) throws JsonProcessingException {
 		return MAPPER.writeValueAsString(obj);
+	}
+
+	public static final void writeJsonToStream(OutputStream stream, Object obj)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		MAPPER.writeValue(stream, obj);
 	}
 
 	public static final JsonNode Deserialize(String json) throws IOException {

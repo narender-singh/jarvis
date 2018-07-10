@@ -3,9 +3,9 @@ package com.rocket;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
@@ -19,10 +19,10 @@ import com.rocket.core.http.RestRequest;
 
 public class RocketTest {
 
-	private Rocket rocket;
+	private static Rocket rocket;
 
-	@Before
-	public void before() {
+	@BeforeClass
+	public static void before() {
 		RocketLauncher.Launch();
 		rocket = RocketLauncher.getRocket();
 	}
@@ -60,8 +60,8 @@ public class RocketTest {
 		Assert.assertEquals("value", resp.getContent().get("key").asText());
 	}
 
-	@After
-	public void after() throws Exception {
+	@AfterClass
+	public static void after() throws Exception {
 		RocketLauncher.stop();
 	}
 }
