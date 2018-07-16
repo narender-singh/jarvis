@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.rocket.core.configuration.CamelConfiguration;
 import com.rocket.core.configuration.CoreSpringConfiguration;
 import com.rocket.core.utils.RocketUtils;
+
+import sun.misc.SignalHandler;
 
 public final class Rocket implements AutoCloseable {
 
@@ -43,6 +47,7 @@ public final class Rocket implements AutoCloseable {
 	 */
 	private Rocket() {
 		Thread.currentThread().setUncaughtExceptionHandler(UEH);
+		registerRocketSignalHandler();
 	}
 
 	public Rocket withEnv(Env env) {
@@ -227,6 +232,11 @@ public final class Rocket implements AutoCloseable {
 			System.setProperty(prop, properties.getProperty(prop));
 		}
 		return result;
+	}
+	
+	private void registerRocketSignalHandler(){
+		//TERM INT HUP
+	//	Supplier<SignalHandler> oldTermSh; = new Future<>();
 	}
 
 	private int waitForExistSingal() {

@@ -1,7 +1,6 @@
 package com.rocket.core;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +12,9 @@ public class RocketSignalHandler implements SignalHandler {
 
 	private static final Logger l = LoggerFactory.getLogger(RocketSignalHandler.class);
 
-	private final Future<SignalHandler> oldHandler;
+	private final Supplier<SignalHandler> oldHandler;
 
-	public RocketSignalHandler(Future<SignalHandler> sigHandler) {
+	public RocketSignalHandler(Supplier<SignalHandler> sigHandler) {
 		this.oldHandler = sigHandler;
 	}
 
@@ -24,21 +23,11 @@ public class RocketSignalHandler implements SignalHandler {
 		try {
 			l.info("Signal Received : " + sig);
 		} catch (Throwable t) {
-			try {
-				SignalHandler old = oldHandler.get();
-				old.handle(sig);
-			} catch (InterruptedException | ExecutionException e) {
-				Error er = new Error(e);
-				er.addSuppressed(t);
-				throw er;
-			}
+			SignalHandler old = oldHandler.get();
+			old.handle(sig);
 			return;
 		}
-		try {
-			oldHandler.get().handle(sig);
-		} catch (InterruptedException | ExecutionException e) {
-			throw new Error(e);
-		}
+		oldHandler.get().handle(sig);
 	}
 
 	@Override
