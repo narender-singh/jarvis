@@ -84,6 +84,8 @@ public final class Rocket implements AutoCloseable {
 	}
 
 	public Rocket withProperties(final Properties prop) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is running, can't add/modify properties");		
 		if (this.properties == null)
 			properties = prop;
 		else
@@ -92,6 +94,8 @@ public final class Rocket implements AutoCloseable {
 	}
 
 	public Rocket withProperty(final String key, final String value) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is running, can't add/modify properties");
 		if (properties != null)
 			properties.setProperty(key, value);
 		else {
@@ -131,31 +135,43 @@ public final class Rocket implements AutoCloseable {
 	}
 
 	public Rocket withClass(final Class<?> clazz) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_CLASSES.add(clazz);
 		return this;
 	}
 
 	public Rocket withClasses(final Class<?>... clazzes) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_CLASSES.addAll(Arrays.asList(clazzes));
 		return this;
 	}
 
 	public Rocket withClasses(final Collection<? extends Class<?>> clazzes) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_CLASSES.addAll(clazzes);
 		return this;
 	}
 
 	public Rocket withPackage(final String packageName) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_PACKAGES.add(packageName);
 		return this;
 	}
 
 	public Rocket withPackages(final String... packages) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_PACKAGES.addAll(Arrays.asList(packages));
 		return this;
 	}
 
 	public Rocket withPackages(final Set<String> packages) {
+		if(isRunning())
+			throw new IllegalStateException("Rocket is already running, can't modify state");
 		MAIN_PACKAGES.addAll(packages);
 		return this;
 	}
@@ -296,7 +312,5 @@ public final class Rocket implements AutoCloseable {
 				}
 			}
 		}
-
 	}
-
 }
