@@ -207,7 +207,7 @@ public final class Rocket implements AutoCloseable {
 		if (!isStarted) {
 			start();
 		}
-		System.exit(waitForExistSingal());
+		System.exit(waitForExistSignal());
 	}
 
 	private void initializeInternal() {
@@ -266,7 +266,7 @@ public final class Rocket implements AutoCloseable {
 		}
 	}
 
-	private int waitForExistSingal() {
+	private int waitForExistSignal() {
 		try {
 			RocketLogger.LAZY.info("Rocket launched successfully...:)");
 			exitSignal.await();
