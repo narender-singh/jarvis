@@ -17,8 +17,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.rocket.core.configuration.CamelConfiguration;
 import com.rocket.core.configuration.CoreSpringConfiguration;
+import com.rocket.core.utils.Result;
 import com.rocket.core.utils.RocketUtils;
 
+import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 public final class Rocket implements AutoCloseable {
@@ -233,10 +235,19 @@ public final class Rocket implements AutoCloseable {
 		}
 		return result;
 	}
-	
-	private void registerRocketSignalHandler(){
-		//TERM INT HUP
-	//	Supplier<SignalHandler> oldTermSh; = new Future<>();
+
+	private void registerRocketSignalHandler() {
+		Result<SignalHandler> oldTermSh = new Result<>();
+		RocketSignalHandler termSh = new RocketSignalHandler(oldTermSh);
+		oldTermSh.setResult(Signal.handle(new Signal("TERM"), termSh));
+		Result<SignalHandler> oldIntSh = new Result<>();
+		RocketSignalHandler intSh = new RocketSignalHandler(oldIntSh);
+		oldIntSh.setResult(Signal.handle(new Signal("INT"), intSh));
+		if (Habitat.getCurrentOS() != SupportedOS.WINDOWS) {
+			Result<SignalHandler> oldHupSh = new Result<>();
+			RocketSignalHandler hupSh = new RocketSignalHandler(oldHupSh);
+			oldHupSh.setResult(Signal.handle(new Signal("HUP"), hupSh));
+		}
 	}
 
 	private int waitForExistSingal() {

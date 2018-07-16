@@ -6,6 +6,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.cxf.ws.policy.attachment.external.DomainExpression;
+
 public class Result<V> implements Future<V> {
 
 	private volatile V result;
@@ -57,4 +59,9 @@ public class Result<V> implements Future<V> {
 		}
 	}
 
+	public synchronized void setResult(V res) {
+		if(result != null)
+			throw new IllegalStateException("cannot set result multiple times " + res);
+		this.result = res;
+	}
 }
