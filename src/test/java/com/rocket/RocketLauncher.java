@@ -60,7 +60,7 @@ public class RocketLauncher {
 		@Override
 		public void configure() throws Exception {
 			//
-			from("jetty:http://0.0.0.0:{{http.portNo}}/test?matchOnUriPrefix=true").to("cxfbean:webService");
+			from("rjetty:http://0.0.0.0:{{http.portNo}}/test?matchOnUriPrefix=true").to("cxfbean:webService");
 		}
 
 	}
