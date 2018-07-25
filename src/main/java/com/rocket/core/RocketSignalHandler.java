@@ -2,17 +2,13 @@ package com.rocket.core;
 
 import java.util.concurrent.ExecutionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.rocket.core.Rocket.RocketLogger;
 import com.rocket.core.utils.Result;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 public class RocketSignalHandler implements SignalHandler {
-
-	private static final Logger l = LoggerFactory.getLogger(RocketSignalHandler.class);
 
 	private final Result<SignalHandler> oldHandler;
 
@@ -23,9 +19,9 @@ public class RocketSignalHandler implements SignalHandler {
 	@Override
 	public void handle(Signal sig) {
 		try {
-			l.info("Signal Received : " + sig);
+			RocketLogger.LAZY.info("Signal Received : " + sig);
 		} catch (Throwable t) {
-			l.warn("Signal Received : " + sig);
+			RocketLogger.LAZY.warn("Signal Received : " + sig);
 			try {
 				SignalHandler old = oldHandler.get();
 				old.handle(sig);
