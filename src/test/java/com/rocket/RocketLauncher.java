@@ -28,8 +28,8 @@ public class RocketLauncher {
 	static {
 
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		RocketLauncher launcher = new RocketLauncher();
 		launcher.Launch();
 	}
@@ -67,12 +67,8 @@ public class RocketLauncher {
 
 	@Path("/")
 	public static class WS {
-		
-		private static final Logger l = LoggerFactory.getLogger(WS.class);
-
 		private static final Map<String, String> TEST_DATA = new HashMap<>();
-
-		{
+		static {
 			TEST_DATA.put("get", "GET");
 			TEST_DATA.put("put", "PUT");
 			TEST_DATA.put("post", "POST");
@@ -101,7 +97,7 @@ public class RocketLauncher {
 		@Produces({ MediaType.TEXT_PLAIN })
 		@Consumes({ MediaType.APPLICATION_JSON })
 		public String put(JsonNode s) {
-			l.info("got request content : " + s);
+
 			if (TEST_DATA.containsKey(s.get("put").asText())) {
 				TEST_DATA.put("put", s.get("put").asText());
 				return s.get("put").asText();
